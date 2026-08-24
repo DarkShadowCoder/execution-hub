@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Plus } from "lucide-react";
+import { Plus, Upload, Download } from "lucide-react";
 import { toast } from "sonner";
 
-import { listTariffs, saveTariff } from "@/lib/admin.functions";
+import { listTariffs, saveTariff, importTariffs } from "@/lib/admin.functions";
 import { PageHeader } from "@/components/admin/ui-bits";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { money } from "@/lib/format";
+import { parseCsv, parseAmount, downloadCsv } from "@/lib/csv";
+
 
 export const Route = createFileRoute("/admin/tariffs")({
   head: () => ({
