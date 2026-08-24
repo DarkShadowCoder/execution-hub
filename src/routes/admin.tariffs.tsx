@@ -248,17 +248,91 @@ function TariffsPage() {
         title="Tarifs"
         subtitle="Frais appliqués par corridor et tranche de montant"
         actions={
-          <Button
-            className="gap-1.5"
-            onClick={() => {
-              setForm(EMPTY);
-              setOpen((v) => !v);
-            }}
-          >
-            <Plus className="size-4" /> Nouveau tarif
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".csv,text/csv,text/plain"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void onFile(f);
+                e.target.value = "";
+              }}
+            />
+            <Button
+              variant="ghost"
+              className="gap-1.5"
+              onClick={() =>
+                downloadCsv(
+                  "modele-tarifs",
+                  [
+                    { header: "country_a", value: (r: ImportRow) => r.country_a },
+                    { header: "country_b", value: (r: ImportRow) => r.country_b },
+                    { header: "min_amount", value: (r: ImportRow) => r.min_amount },
+                    { header: "max_amount", value: (r: ImportRow) => r.max_amount },
+                    { header: "fee_amount", value: (r: ImportRow) => r.fee_amount },
+                  ],
+                  TEMPLATE_ROWS,
+                )
+              }
+            >
+              <Download className="size-4" /> Modèle CSV
+            </Button>
+            <Button variant="outline" className="gap-1.5" onClick={() => fileRef.current?.click()}>
+              <Upload className="size-4" /> Importer un CSV
+            </Button>
+            <Button
+              className="gap-1.5"
+              onClick={() => {
+                setForm(EMPTY);
+                setOpen((v) => !v);
+              }}
+            >
+              <Plus className="size-4" /> Nouveau tarif
+            </Button>
+          </div>
         }
       />
+
+      {pendingImport ? (
+        <Card className="space-y-3 p-4">
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              {pendingImport.rows.length} tarifs détectés dans « {pendingImport.name} »
+            </p>
+            <p className="text-sm text-muted-foreground">
+              L'import remplace intégralement la grille tarifaire actuelle ({rows.length} lignes).
+            </p>
+          </div>
+          <div className="max-h-56 overflow-auto rounded-md border">
+            <table className="w-full text-sm">
+              <tbody>
+                {pendingImport.rows.slice(0, 50).map((r, i) => (
+                  <tr key={i} className="border-b last:border-0">
+                    <td className="px-3 py-1.5">
+                      {r.country_a} ↔ {r.country_b}
+                    </td>
+                    <td className="px-3 py-1.5 text-muted-foreground tabular-nums">
+                      {money(r.min_amount)} – {money(r.max_amount)}
+                    </td>
+                    <td className="px-3 py-1.5 text-right tabular-nums">{money(r.fee_amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex gap-2">
+            <Button disabled={importMut.isPending} onClick={() => importMut.mutate()}>
+              {importMut.isPending ? "Import en cours…" : "Remplacer les tarifs"}
+            </Button>
+            <Button variant="outline" onClick={() => setPendingImport(null)}>
+              Annuler
+            </Button>
+          </div>
+        </Card>
+      ) : null}
+
 
       {open ? (
         <Card className="grid gap-3 p-4 sm:grid-cols-2">
