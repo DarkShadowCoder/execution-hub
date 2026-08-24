@@ -114,21 +114,6 @@ function UserDetail() {
         />
       </div>
 
-      <div className="space-y-2">
-        <h2 className="section-title">Grand livre du wallet</h2>
-        <DataTable
-          rows={data.ledger}
-          empty="Aucune écriture."
-          columns={[
-            { key: "d", header: "Date", render: (r: any) => dateTime(r.created_at) },
-            { key: "t", header: "Type", render: (r: any) => String(r.entry_type ?? "—").replace(/_/g, " ") },
-            { key: "a", header: "Montant", align: "right", render: (r: any) => money(r.amount) },
-            { key: "b", header: "Avant", align: "right", render: (r: any) => money(r.balance_before) },
-            { key: "af", header: "Après", align: "right", render: (r: any) => money(r.balance_after) },
-            { key: "s", header: "Source", render: (r: any) => String(r.source_type ?? "—").replace(/_/g, " ") },
-          ]}
-        />
-      </div>
     </div>
   );
 }
