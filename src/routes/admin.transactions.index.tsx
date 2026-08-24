@@ -42,7 +42,7 @@ function TransactionsPage() {
   });
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader title="Transactions" subtitle="Toutes les opérations financières de la plateforme" />
 
       <Card className="space-y-3 p-4">

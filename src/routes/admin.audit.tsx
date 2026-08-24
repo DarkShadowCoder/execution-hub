@@ -149,7 +149,7 @@ function AuditPage() {
   );
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader title="Audit" subtitle="Traçabilité complète des opérations de la plateforme" />
 
       <Tabs defaultValue="logs">

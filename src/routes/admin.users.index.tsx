@@ -32,7 +32,7 @@ function UsersPage() {
   });
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader title="Utilisateurs" subtitle="Comptes clients et soldes associés" />
       <Card className="p-4">
         <div className="relative">

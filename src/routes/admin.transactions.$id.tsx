@@ -153,7 +153,7 @@ function TransactionDetail() {
   const tx = data.tx;
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <Link to="/admin/transactions" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-4" /> Retour aux transactions
       </Link>

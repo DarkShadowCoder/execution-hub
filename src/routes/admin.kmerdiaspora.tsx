@@ -92,7 +92,7 @@ function KmerDiasporaPage() {
   ];
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader title="KmerDiaspora" subtitle="Supervision de l'espace communautaire et modération" />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -103,7 +103,7 @@ function KmerDiasporaPage() {
       </div>
 
       {target ? (
-        <Card className="grid gap-3 p-4 sm:grid-cols-3">
+        <Card className="grid gap-4 p-5 sm:grid-cols-3">
           <div className="sm:col-span-3 text-sm font-medium text-foreground">Modération : {target.title}</div>
           <select
             className="h-9 rounded-md border border-input bg-background px-3 text-sm"

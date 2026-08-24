@@ -59,7 +59,7 @@ function MomoPage() {
   });
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader
         title="Numéros Mobile Money"
         subtitle="Comptes de réception utilisés pour les dépôts clients"
@@ -77,7 +77,7 @@ function MomoPage() {
       />
 
       {open ? (
-        <Card className="grid gap-3 p-4 sm:grid-cols-2">
+        <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <Input
             value={form.holder_name}
             onChange={(e) => setForm({ ...form, holder_name: e.target.value })}

@@ -27,7 +27,7 @@ function WalletsPage() {
   const pending = rows.reduce((a: number, r: any) => a + Number(r.pending_balance ?? 0), 0);
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader title="Wallets" subtitle="Soldes clients et fonds réservés" />
       <div className="grid gap-4 sm:grid-cols-3">
         <KpiCard title="Total disponible" value={money(available)} tone="success" />

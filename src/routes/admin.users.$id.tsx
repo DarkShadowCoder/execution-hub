@@ -51,7 +51,7 @@ function UserDetail() {
   if (!data?.profile) return <EmptyState message="Utilisateur introuvable." />;
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <Link to="/admin/users" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-4" /> Retour aux utilisateurs
       </Link>

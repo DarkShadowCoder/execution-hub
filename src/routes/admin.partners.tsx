@@ -68,7 +68,7 @@ function PartnersPage() {
   });
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader
         title="Partenaires"
         subtitle="Réseau d'exécution sur le terrain"
@@ -86,7 +86,7 @@ function PartnersPage() {
       />
 
       {open ? (
-        <Card className="grid gap-3 p-4 sm:grid-cols-2">
+        <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <Input
             value={form.full_name}
             onChange={(e) => setForm({ ...form, full_name: e.target.value })}
