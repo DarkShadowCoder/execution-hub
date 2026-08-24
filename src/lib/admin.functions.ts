@@ -662,3 +662,53 @@ export const setAdminActive = createServerFn({ method: "POST" })
     await logAction(admin.id, "settings.admin.toggle", "admin", data.id, { active: data.active });
     return { ok: true };
   });
+
+export const importTariffs = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: {
+      rows: { country_a: string; country_b: string; min_amount: number; max_amount: number; fee_amount: number }[];
+      replaceAll?: boolean | undefined;
+    }) => d,
+  )
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { assertAdmin, db, logAction } = await import("./admin.server");
+    const admin = await assertAdmin(context.userId);
+
+    const COUNTRIES = ["mali", "guinee", "cameroun"];
+    const clean = data.rows.map((r, i) => {
+      const a = String(r.country_a ?? "").toLowerCase().trim();
+      const b = String(r.country_b ?? "").toLowerCase().trim();
+      if (!COUNTRIES.includes(a) || !COUNTRIES.includes(b)) {
+        throw new Error(`Ligne ${i + 1} : pays invalide (${r.country_a} / ${r.country_b})`);
+      }
+      const nums = [r.min_amount, r.max_amount, r.fee_amount].map(Number);
+      if (nums.some((n) => !Number.isFinite(n) || n < 0)) {
+        throw new Error(`Ligne ${i + 1} : montant invalide`);
+      }
+      if (nums[1]! < nums[0]!) throw new Error(`Ligne ${i + 1} : max < min`);
+      return {
+        country_a: a,
+        country_b: b,
+        min_amount: nums[0]!,
+        max_amount: nums[1]!,
+        fee_amount: nums[2]!,
+      };
+    });
+
+    if (clean.length === 0) throw new Error("Le fichier ne contient aucune ligne exploitable");
+
+    if (data.replaceAll !== false) {
+      const del = await db.from("transfer_fee_tariffs").delete().not("id", "is", null);
+      if (del.error) throw new Error(del.error.message);
+    }
+
+    const res = await db.from("transfer_fee_tariffs").insert(clean as never);
+    if (res.error) throw new Error(res.error.message);
+
+    await logAction(admin.id, "tariff.import", "tariff", null, {
+      count: clean.length,
+      replaceAll: data.replaceAll !== false,
+    });
+    return { ok: true, count: clean.length };
+  });
