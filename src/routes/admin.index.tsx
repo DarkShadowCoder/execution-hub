@@ -11,6 +11,7 @@ import {
   XCircle,
   Handshake,
   Coins,
+  ArrowUpRight,
 } from "lucide-react";
 import {
   Area,
