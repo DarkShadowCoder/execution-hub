@@ -378,7 +378,10 @@ function TariffsPage() {
         </Card>
       ) : null}
 
-      <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun tarif configuré." />
+      <section className="space-y-3">
+        <h2 className="section-title block">Grille tarifaire</h2>
+        <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun tarif configuré." />
+      </section>
     </div>
   );
 }

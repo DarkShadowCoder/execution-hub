@@ -141,7 +141,10 @@ function BatchesPage() {
         </Card>
       ) : null}
 
-      <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun lot journalier." />
+      <section className="space-y-3">
+        <h2 className="section-title block">Lots journaliers</h2>
+        <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun lot journalier." />
+      </section>
     </div>
   );
 }

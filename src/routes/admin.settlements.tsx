@@ -246,7 +246,10 @@ function SettlementsPage() {
         </Card>
       ) : null}
 
-      <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun règlement enregistré." />
+      <section className="space-y-3">
+        <h2 className="section-title block">Règlements</h2>
+        <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun règlement enregistré." />
+      </section>
     </div>
   );
 }

@@ -127,41 +127,44 @@ function PartnersPage() {
         </Card>
       ) : null}
 
-      <DataTable
-        loading={isPending}
-        rows={data?.rows}
-        empty="Aucun partenaire enregistré."
-        columns={[
-          { key: "n", header: "Nom", render: (r: any) => r.full_name },
-          { key: "p", header: "Téléphone", render: (r: any) => r.phone_number ?? "—" },
-          { key: "w", header: "WhatsApp", render: (r: any) => r.whatsapp_number ?? "—" },
-          { key: "s", header: "Statut", render: (r: any) => <StatusPill status={r.active ? "active" : "cancelled"} /> },
-          { key: "c", header: "Créé le", render: (r: any) => dateTime(r.created_at) },
-          {
-            key: "a",
-            header: "",
-            align: "right",
-            render: (r: any) => (
-              <button
-                className="text-xs font-medium text-primary hover:underline"
-                onClick={() => {
-                  setForm({
-                    id: r.id,
-                    full_name: r.full_name ?? "",
-                    phone_number: r.phone_number ?? "",
-                    whatsapp_number: r.whatsapp_number ?? "",
-                    notes: r.notes ?? "",
-                    active: !!r.active,
-                  });
-                  setOpen(true);
-                }}
-              >
-                Modifier
-              </button>
-            ),
-          },
-        ]}
-      />
+      <section className="space-y-3">
+        <h2 className="section-title block">Partenaires</h2>
+        <DataTable
+          loading={isPending}
+          rows={data?.rows}
+          empty="Aucun partenaire enregistré."
+          columns={[
+            { key: "n", header: "Nom", render: (r: any) => r.full_name },
+            { key: "p", header: "Téléphone", render: (r: any) => r.phone_number ?? "—" },
+            { key: "w", header: "WhatsApp", render: (r: any) => r.whatsapp_number ?? "—" },
+            { key: "s", header: "Statut", render: (r: any) => <StatusPill status={r.active ? "active" : "cancelled"} /> },
+            { key: "c", header: "Créé le", render: (r: any) => dateTime(r.created_at) },
+            {
+              key: "a",
+              header: "",
+              align: "right",
+              render: (r: any) => (
+                <button
+                  className="text-xs font-medium text-primary hover:underline"
+                  onClick={() => {
+                    setForm({
+                      id: r.id,
+                      full_name: r.full_name ?? "",
+                      phone_number: r.phone_number ?? "",
+                      whatsapp_number: r.whatsapp_number ?? "",
+                      notes: r.notes ?? "",
+                      active: !!r.active,
+                    });
+                    setOpen(true);
+                  }}
+                >
+                  Modifier
+                </button>
+              ),
+            },
+          ]}
+        />
+      </section>
     </div>
   );
 }
