@@ -41,15 +41,139 @@ type Form = {
 
 const EMPTY: Form = { country_a: "", country_b: "", min_amount: "", max_amount: "", fee_amount: "" };
 
+type ImportRow = {
+  country_a: string;
+  country_b: string;
+  min_amount: number;
+  max_amount: number;
+  fee_amount: number;
+};
+
+const COUNTRY_ALIASES: Record<string, string> = {
+  mali: "mali",
+  ml: "mali",
+  guinee: "guinee",
+  guinée: "guinee",
+  guinea: "guinee",
+  gn: "guinee",
+  cameroun: "cameroun",
+  cameroon: "cameroun",
+  cmr: "cameroun",
+  cm: "cameroun",
+};
+
+function normCountry(raw: string) {
+  const key = (raw ?? "")
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  return COUNTRY_ALIASES[key] ?? COUNTRY_ALIASES[raw?.toLowerCase()?.trim()] ?? "";
+}
+
+const TEMPLATE_ROWS: ImportRow[] = [
+  { country_a: "mali", country_b: "cameroun", min_amount: 1, max_amount: 10000, fee_amount: 0 },
+  { country_a: "mali", country_b: "cameroun", min_amount: 10001, max_amount: 30000, fee_amount: 2500 },
+  { country_a: "guinee", country_b: "cameroun", min_amount: 1, max_amount: 10000, fee_amount: 0 },
+  { country_a: "guinee", country_b: "cameroun", min_amount: 10001, max_amount: 30000, fee_amount: 4500 },
+];
+
+/**
+ * Accepte deux formats :
+ *  - country_a,country_b,min_amount,max_amount,fee_amount
+ *  - corridor,min_amount,max_amount,fee_amount  (corridor = "Mali_Cameroun")
+ */
+function parseTariffCsv(text: string): ImportRow[] {
+  const grid = parseCsv(text);
+  if (grid.length === 0) throw new Error("Fichier vide");
+
+  const head = grid[0]!.map((h) =>
+    h.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z_]/g, ""),
+  );
+  const idx = (...names: string[]) => head.findIndex((h) => names.includes(h));
+  const iA = idx("country_a", "paysa", "pays_a", "origine", "from");
+  const iB = idx("country_b", "paysb", "pays_b", "destination", "to");
+  const iCorr = idx("corridor", "couloir", "axe");
+  const iMin = idx("min_amount", "min", "montantmin", "montant_min", "tranchemin");
+  const iMax = idx("max_amount", "max", "montantmax", "montant_max", "tranchemax");
+  const iFee = idx("fee_amount", "fee", "frais", "montantfrais");
+
+  const hasHeader = iMin >= 0 && iMax >= 0 && iFee >= 0 && (iA >= 0 || iCorr >= 0);
+  const body = hasHeader ? grid.slice(1) : grid;
+
+  const out: ImportRow[] = [];
+  body.forEach((cells, n) => {
+    const line = n + (hasHeader ? 2 : 1);
+    let a = "";
+    let b = "";
+    let min: number;
+    let max: number;
+    let fee: number;
+
+    if (hasHeader && iCorr >= 0 && iA < 0) {
+      const parts = (cells[iCorr] ?? "").split(/[_\-/↔>|]+/);
+      a = normCountry(parts[0] ?? "");
+      b = normCountry(parts[1] ?? "");
+      min = parseAmount(cells[iMin] ?? "");
+      max = parseAmount(cells[iMax] ?? "");
+      fee = parseAmount(cells[iFee] ?? "");
+    } else if (hasHeader) {
+      a = normCountry(cells[iA] ?? "");
+      b = normCountry(cells[iB] ?? "");
+      min = parseAmount(cells[iMin] ?? "");
+      max = parseAmount(cells[iMax] ?? "");
+      fee = parseAmount(cells[iFee] ?? "");
+    } else {
+      if (cells.length < 5) throw new Error(`Ligne ${line} : 5 colonnes attendues`);
+      a = normCountry(cells[0] ?? "");
+      b = normCountry(cells[1] ?? "");
+      min = parseAmount(cells[2] ?? "");
+      max = parseAmount(cells[3] ?? "");
+      fee = parseAmount(cells[4] ?? "");
+    }
+
+    if (!a || !b) throw new Error(`Ligne ${line} : pays inconnu (mali, guinee ou cameroun attendus)`);
+    if ([min, max, fee].some((v) => !Number.isFinite(v))) throw new Error(`Ligne ${line} : montant illisible`);
+    if (max < min) throw new Error(`Ligne ${line} : montant maximum inférieur au minimum`);
+    out.push({ country_a: a, country_b: b, min_amount: min, max_amount: max, fee_amount: fee });
+  });
+
+  if (out.length === 0) throw new Error("Aucune ligne de tarif détectée");
+  return out;
+}
+
 function TariffsPage() {
   const qc = useQueryClient();
   const fetchRows = useServerFn(listTariffs);
   const save = useServerFn(saveTariff);
+  const runImport = useServerFn(importTariffs);
   const [form, setForm] = useState<Form>(EMPTY);
   const [open, setOpen] = useState(false);
+  const [pendingImport, setPendingImport] = useState<{ name: string; rows: ImportRow[] } | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const { data, isPending } = useQuery({ queryKey: ["tariffs"], queryFn: () => fetchRows() });
   const rows = data?.rows ?? [];
+
+  const importMut = useMutation({
+    mutationFn: () => runImport({ data: { rows: pendingImport?.rows ?? [], replaceAll: true } }),
+    onSuccess: (res: { count: number }) => {
+      toast.success(`${res.count} tarifs importés`);
+      setPendingImport(null);
+      qc.invalidateQueries({ queryKey: ["tariffs"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  async function onFile(file: File) {
+    try {
+      const parsed = parseTariffCsv(await file.text());
+      setPendingImport({ name: file.name, rows: parsed });
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
 
   const saveMut = useMutation({
     mutationFn: () =>
