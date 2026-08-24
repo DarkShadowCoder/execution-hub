@@ -95,7 +95,7 @@ function KmerDiasporaPage() {
     <div className="reveal space-y-8">
       <PageHeader title="KmerDiaspora" subtitle="Supervision de l'espace communautaire et modération" />
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard title="Profils" value={data?.profiles.length ?? 0} />
         <KpiCard title="Offres d'emploi" value={data?.jobs.length ?? 0} />
         <KpiCard title="Demandes chauffeurs" value={data?.drivers.length ?? 0} />
