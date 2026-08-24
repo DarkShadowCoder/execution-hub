@@ -10,33 +10,229 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAuditRouteImport } from './routes/admin.audit'
+import { Route as AdminBatchesRouteImport } from './routes/admin.batches'
+import { Route as AdminKmerdiasporaRouteImport } from './routes/admin.kmerdiaspora'
+import { Route as AdminMomoRouteImport } from './routes/admin.momo'
+import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminSettlementsRouteImport } from './routes/admin.settlements'
+import { Route as AdminTariffsRouteImport } from './routes/admin.tariffs'
+import { Route as AdminWalletsRouteImport } from './routes/admin.wallets'
+import { Route as AdminTransactionsIndexRouteImport } from './routes/admin.transactions.index'
+import { Route as AdminTransactionsIdRouteImport } from './routes/admin.transactions.$id'
+import { Route as AdminUsersIndexRouteImport } from './routes/admin.users.index'
+import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAuditRoute = AdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBatchesRoute = AdminBatchesRouteImport.update({
+  id: '/batches',
+  path: '/batches',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKmerdiasporaRoute = AdminKmerdiasporaRouteImport.update({
+  id: '/kmerdiaspora',
+  path: '/kmerdiaspora',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMomoRoute = AdminMomoRouteImport.update({
+  id: '/momo',
+  path: '/momo',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPartnersRoute = AdminPartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettlementsRoute = AdminSettlementsRouteImport.update({
+  id: '/settlements',
+  path: '/settlements',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTariffsRoute = AdminTariffsRouteImport.update({
+  id: '/tariffs',
+  path: '/tariffs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminWalletsRoute = AdminWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsIndexRoute = AdminTransactionsIndexRouteImport.update({
+  id: '/transactions/',
+  path: '/transactions/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsIdRoute = AdminTransactionsIdRouteImport.update({
+  id: '/transactions/$id',
+  path: '/transactions/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersIdRoute = AdminUsersIdRouteImport.update({
+  id: '/users/$id',
+  path: '/users/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/audit': typeof AdminAuditRoute
+  '/admin/batches': typeof AdminBatchesRoute
+  '/admin/kmerdiaspora': typeof AdminKmerdiasporaRoute
+  '/admin/momo': typeof AdminMomoRoute
+  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/settlements': typeof AdminSettlementsRoute
+  '/admin/tariffs': typeof AdminTariffsRoute
+  '/admin/wallets': typeof AdminWalletsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/transactions/$id': typeof AdminTransactionsIdRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/transactions/': typeof AdminTransactionsIndexRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/admin/audit': typeof AdminAuditRoute
+  '/admin/batches': typeof AdminBatchesRoute
+  '/admin/kmerdiaspora': typeof AdminKmerdiasporaRoute
+  '/admin/momo': typeof AdminMomoRoute
+  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/settlements': typeof AdminSettlementsRoute
+  '/admin/tariffs': typeof AdminTariffsRoute
+  '/admin/wallets': typeof AdminWalletsRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/transactions/$id': typeof AdminTransactionsIdRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/transactions': typeof AdminTransactionsIndexRoute
+  '/admin/users': typeof AdminUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/audit': typeof AdminAuditRoute
+  '/admin/batches': typeof AdminBatchesRoute
+  '/admin/kmerdiaspora': typeof AdminKmerdiasporaRoute
+  '/admin/momo': typeof AdminMomoRoute
+  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/settlements': typeof AdminSettlementsRoute
+  '/admin/tariffs': typeof AdminTariffsRoute
+  '/admin/wallets': typeof AdminWalletsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/transactions/$id': typeof AdminTransactionsIdRoute
+  '/admin/users/$id': typeof AdminUsersIdRoute
+  '/admin/transactions/': typeof AdminTransactionsIndexRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/admin/audit'
+    | '/admin/batches'
+    | '/admin/kmerdiaspora'
+    | '/admin/momo'
+    | '/admin/partners'
+    | '/admin/settings'
+    | '/admin/settlements'
+    | '/admin/tariffs'
+    | '/admin/wallets'
+    | '/admin/'
+    | '/admin/transactions/$id'
+    | '/admin/users/$id'
+    | '/admin/transactions/'
+    | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/admin/audit'
+    | '/admin/batches'
+    | '/admin/kmerdiaspora'
+    | '/admin/momo'
+    | '/admin/partners'
+    | '/admin/settings'
+    | '/admin/settlements'
+    | '/admin/tariffs'
+    | '/admin/wallets'
+    | '/admin'
+    | '/admin/transactions/$id'
+    | '/admin/users/$id'
+    | '/admin/transactions'
+    | '/admin/users'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/admin/audit'
+    | '/admin/batches'
+    | '/admin/kmerdiaspora'
+    | '/admin/momo'
+    | '/admin/partners'
+    | '/admin/settings'
+    | '/admin/settlements'
+    | '/admin/tariffs'
+    | '/admin/wallets'
+    | '/admin/'
+    | '/admin/transactions/$id'
+    | '/admin/users/$id'
+    | '/admin/transactions/'
+    | '/admin/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +244,161 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/audit': {
+      id: '/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AdminAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/batches': {
+      id: '/admin/batches'
+      path: '/batches'
+      fullPath: '/admin/batches'
+      preLoaderRoute: typeof AdminBatchesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/kmerdiaspora': {
+      id: '/admin/kmerdiaspora'
+      path: '/kmerdiaspora'
+      fullPath: '/admin/kmerdiaspora'
+      preLoaderRoute: typeof AdminKmerdiasporaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/momo': {
+      id: '/admin/momo'
+      path: '/momo'
+      fullPath: '/admin/momo'
+      preLoaderRoute: typeof AdminMomoRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/partners': {
+      id: '/admin/partners'
+      path: '/partners'
+      fullPath: '/admin/partners'
+      preLoaderRoute: typeof AdminPartnersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settlements': {
+      id: '/admin/settlements'
+      path: '/settlements'
+      fullPath: '/admin/settlements'
+      preLoaderRoute: typeof AdminSettlementsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tariffs': {
+      id: '/admin/tariffs'
+      path: '/tariffs'
+      fullPath: '/admin/tariffs'
+      preLoaderRoute: typeof AdminTariffsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/wallets': {
+      id: '/admin/wallets'
+      path: '/wallets'
+      fullPath: '/admin/wallets'
+      preLoaderRoute: typeof AdminWalletsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions/': {
+      id: '/admin/transactions/'
+      path: '/transactions'
+      fullPath: '/admin/transactions/'
+      preLoaderRoute: typeof AdminTransactionsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions/$id': {
+      id: '/admin/transactions/$id'
+      path: '/transactions/$id'
+      fullPath: '/admin/transactions/$id'
+      preLoaderRoute: typeof AdminTransactionsIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users/': {
+      id: '/admin/users/'
+      path: '/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminUsersIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users/$id': {
+      id: '/admin/users/$id'
+      path: '/users/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AdminUsersIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAuditRoute: typeof AdminAuditRoute
+  AdminBatchesRoute: typeof AdminBatchesRoute
+  AdminKmerdiasporaRoute: typeof AdminKmerdiasporaRoute
+  AdminMomoRoute: typeof AdminMomoRoute
+  AdminPartnersRoute: typeof AdminPartnersRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSettlementsRoute: typeof AdminSettlementsRoute
+  AdminTariffsRoute: typeof AdminTariffsRoute
+  AdminWalletsRoute: typeof AdminWalletsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminTransactionsIdRoute: typeof AdminTransactionsIdRoute
+  AdminUsersIdRoute: typeof AdminUsersIdRoute
+  AdminTransactionsIndexRoute: typeof AdminTransactionsIndexRoute
+  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAuditRoute: AdminAuditRoute,
+  AdminBatchesRoute: AdminBatchesRoute,
+  AdminKmerdiasporaRoute: AdminKmerdiasporaRoute,
+  AdminMomoRoute: AdminMomoRoute,
+  AdminPartnersRoute: AdminPartnersRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSettlementsRoute: AdminSettlementsRoute,
+  AdminTariffsRoute: AdminTariffsRoute,
+  AdminWalletsRoute: AdminWalletsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminTransactionsIdRoute: AdminTransactionsIdRoute,
+  AdminUsersIdRoute: AdminUsersIdRoute,
+  AdminTransactionsIndexRoute: AdminTransactionsIndexRoute,
+  AdminUsersIndexRoute: AdminUsersIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
