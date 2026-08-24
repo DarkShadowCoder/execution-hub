@@ -157,7 +157,7 @@ function SettlementsPage() {
     rows.filter((r: any) => r.status === s).reduce((a: number, r: any) => a + Number(r.amount ?? 0), 0);
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader
         title="Règlements bancaires"
         subtitle="Virements entre comptes de collecte et comptes de reversement"
@@ -174,14 +174,14 @@ function SettlementsPage() {
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <KpiCard title="En attente" value={money(total("pending"))} tone="warning" />
         <KpiCard title="Exécutés" value={money(total("executed"))} />
         <KpiCard title="Terminés" value={money(total("completed"))} tone="success" />
       </div>
 
       {open ? (
-        <Card className="grid gap-3 p-4 sm:grid-cols-2">
+        <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <Input
             value={form.settlement_type}
             onChange={(e) => setForm({ ...form, settlement_type: e.target.value })}
@@ -246,7 +246,10 @@ function SettlementsPage() {
         </Card>
       ) : null}
 
-      <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun règlement enregistré." />
+      <section className="space-y-3">
+        <h2 className="section-title block">Règlements</h2>
+        <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun règlement enregistré." />
+      </section>
     </div>
   );
 }

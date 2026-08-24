@@ -32,7 +32,7 @@ function UsersPage() {
   });
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader title="Utilisateurs" subtitle="Comptes clients et soldes associés" />
       <Card className="p-4">
         <div className="relative">
@@ -45,39 +45,42 @@ function UsersPage() {
           />
         </div>
       </Card>
-      <DataTable
-        loading={isPending}
-        rows={data?.rows}
-        empty="Aucun utilisateur trouvé."
-        columns={[
-          { key: "u", header: "Utilisateur", render: (r: any) => r.username ?? "—" },
-          { key: "w", header: "WhatsApp", render: (r: any) => r.whatsapp_number ?? "—" },
-          { key: "c", header: "Pays", render: (r: any) => <span className="capitalize">{r.country ?? "—"}</span> },
-          {
-            key: "av",
-            header: "Disponible",
-            align: "right",
-            render: (r: any) => money(r.wallet?.available_balance ?? 0),
-          },
-          {
-            key: "pe",
-            header: "En attente",
-            align: "right",
-            render: (r: any) => money(r.wallet?.pending_balance ?? 0),
-          },
-          { key: "d", header: "Inscription", render: (r: any) => dateTime(r.created_at) },
-          {
-            key: "a",
-            header: "",
-            align: "right",
-            render: (r: any) => (
-              <Link to="/admin/users/$id" params={{ id: r.id }} className="text-xs font-medium text-primary hover:underline">
-                Ouvrir
-              </Link>
-            ),
-          },
-        ]}
-      />
+      <section className="space-y-3">
+        <h2 className="section-title block">Annuaire</h2>
+        <DataTable
+          loading={isPending}
+          rows={data?.rows}
+          empty="Aucun utilisateur trouvé."
+          columns={[
+            { key: "u", header: "Utilisateur", render: (r: any) => r.username ?? "—" },
+            { key: "w", header: "WhatsApp", render: (r: any) => r.whatsapp_number ?? "—" },
+            { key: "c", header: "Pays", render: (r: any) => <span className="capitalize">{r.country ?? "—"}</span> },
+            {
+              key: "av",
+              header: "Disponible",
+              align: "right",
+              render: (r: any) => money(r.wallet?.available_balance ?? 0),
+            },
+            {
+              key: "pe",
+              header: "En attente",
+              align: "right",
+              render: (r: any) => money(r.wallet?.pending_balance ?? 0),
+            },
+            { key: "d", header: "Inscription", render: (r: any) => dateTime(r.created_at) },
+            {
+              key: "a",
+              header: "",
+              align: "right",
+              render: (r: any) => (
+                <Link to="/admin/users/$id" params={{ id: r.id }} className="text-xs font-medium text-primary hover:underline">
+                  Ouvrir
+                </Link>
+              ),
+            },
+          ]}
+        />
+      </section>
     </div>
   );
 }

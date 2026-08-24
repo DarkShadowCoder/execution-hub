@@ -59,7 +59,7 @@ function MomoPage() {
   });
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader
         title="Numéros Mobile Money"
         subtitle="Comptes de réception utilisés pour les dépôts clients"
@@ -77,7 +77,7 @@ function MomoPage() {
       />
 
       {open ? (
-        <Card className="grid gap-3 p-4 sm:grid-cols-2">
+        <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <Input
             value={form.holder_name}
             onChange={(e) => setForm({ ...form, holder_name: e.target.value })}
@@ -115,41 +115,44 @@ function MomoPage() {
         </Card>
       ) : null}
 
-      <DataTable
-        loading={isPending}
-        rows={data?.rows}
-        empty="Aucun numéro configuré."
-        columns={[
-          { key: "h", header: "Titulaire", render: (r: any) => r.holder_name },
-          { key: "p", header: "Numéro", render: (r: any) => r.phone_number },
-          { key: "mi", header: "Min", align: "right", render: (r: any) => (r.min_amount == null ? "—" : money(r.min_amount)) },
-          { key: "ma", header: "Max", align: "right", render: (r: any) => (r.max_amount == null ? "—" : money(r.max_amount)) },
-          { key: "s", header: "Statut", render: (r: any) => <StatusPill status={r.active ? "active" : "cancelled"} /> },
-          {
-            key: "a",
-            header: "",
-            align: "right",
-            render: (r: any) => (
-              <button
-                className="text-xs font-medium text-primary hover:underline"
-                onClick={() => {
-                  setForm({
-                    id: r.id,
-                    phone_number: r.phone_number ?? "",
-                    holder_name: r.holder_name ?? "",
-                    min_amount: r.min_amount == null ? "" : String(r.min_amount),
-                    max_amount: r.max_amount == null ? "" : String(r.max_amount),
-                    active: !!r.active,
-                  });
-                  setOpen(true);
-                }}
-              >
-                Modifier
-              </button>
-            ),
-          },
-        ]}
-      />
+      <section className="space-y-3">
+        <h2 className="section-title block">Numéros configurés</h2>
+        <DataTable
+          loading={isPending}
+          rows={data?.rows}
+          empty="Aucun numéro configuré."
+          columns={[
+            { key: "h", header: "Titulaire", render: (r: any) => r.holder_name },
+            { key: "p", header: "Numéro", render: (r: any) => r.phone_number },
+            { key: "mi", header: "Min", align: "right", render: (r: any) => (r.min_amount == null ? "—" : money(r.min_amount)) },
+            { key: "ma", header: "Max", align: "right", render: (r: any) => (r.max_amount == null ? "—" : money(r.max_amount)) },
+            { key: "s", header: "Statut", render: (r: any) => <StatusPill status={r.active ? "active" : "cancelled"} /> },
+            {
+              key: "a",
+              header: "",
+              align: "right",
+              render: (r: any) => (
+                <button
+                  className="text-xs font-medium text-primary hover:underline"
+                  onClick={() => {
+                    setForm({
+                      id: r.id,
+                      phone_number: r.phone_number ?? "",
+                      holder_name: r.holder_name ?? "",
+                      min_amount: r.min_amount == null ? "" : String(r.min_amount),
+                      max_amount: r.max_amount == null ? "" : String(r.max_amount),
+                      active: !!r.active,
+                    });
+                    setOpen(true);
+                  }}
+                >
+                  Modifier
+                </button>
+              ),
+            },
+          ]}
+        />
+      </section>
     </div>
   );
 }

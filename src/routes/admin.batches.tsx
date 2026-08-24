@@ -96,10 +96,10 @@ function BatchesPage() {
   ];
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader title="Lots journaliers" subtitle="Regroupement quotidien des transactions confirmées" />
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <KpiCard title="Lots" value={rows.length} />
         <KpiCard
           title="Lots en attente"
@@ -110,7 +110,7 @@ function BatchesPage() {
       </div>
 
       {active ? (
-        <Card className="grid gap-3 p-4 sm:grid-cols-3">
+        <Card className="grid gap-4 p-5 sm:grid-cols-3">
           <div className="sm:col-span-3 text-sm font-medium text-foreground">
             Lot du {dateOnly(active.batch_date)} — {money(active.total)}
           </div>
@@ -141,7 +141,10 @@ function BatchesPage() {
         </Card>
       ) : null}
 
-      <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun lot journalier." />
+      <section className="space-y-3">
+        <h2 className="section-title block">Lots journaliers</h2>
+        <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun lot journalier." />
+      </section>
     </div>
   );
 }

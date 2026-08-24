@@ -243,7 +243,7 @@ function TariffsPage() {
   ];
 
   return (
-    <div className="reveal space-y-5">
+    <div className="reveal space-y-8">
       <PageHeader
         title="Tarifs"
         subtitle="Frais appliqués par corridor et tranche de montant"
@@ -335,7 +335,7 @@ function TariffsPage() {
 
 
       {open ? (
-        <Card className="grid gap-3 p-4 sm:grid-cols-2">
+        <Card className="grid gap-4 p-5 sm:grid-cols-2">
           <Input
             value={form.country_a}
             onChange={(e) => setForm({ ...form, country_a: e.target.value })}
@@ -378,7 +378,10 @@ function TariffsPage() {
         </Card>
       ) : null}
 
-      <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun tarif configuré." />
+      <section className="space-y-3">
+        <h2 className="section-title block">Grille tarifaire</h2>
+        <DataTable columns={columns} rows={rows} loading={isPending} empty="Aucun tarif configuré." />
+      </section>
     </div>
   );
 }
