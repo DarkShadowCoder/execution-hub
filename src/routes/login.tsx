@@ -92,9 +92,11 @@ function LoginPage() {
           aria-hidden
         />
         <div className="flex items-center gap-2">
-          <span className="font-display relative grid size-10 place-items-center rounded-xl bg-sidebar-primary text-xl font-bold text-sidebar-primary-foreground">
-            Z
-          </span>
+          <img
+            src="/__l5e/assets-v1/20345e55-06c6-437d-8a27-de545f1b3ec8/zender-logo.png"
+            alt="Zender237"
+            className="size-10 rounded-xl object-contain"
+          />
           <span className="font-display relative text-xl font-semibold">Zender237</span>
         </div>
         <div className="relative max-w-md space-y-4">
