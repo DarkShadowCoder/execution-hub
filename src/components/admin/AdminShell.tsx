@@ -82,9 +82,11 @@ export function AdminShell({ admin, children }: { admin: AdminAccount; children:
         </button>
 
         <Link to="/admin" className="flex items-center gap-2.5">
-          <span className="grid size-9 place-items-center rounded-xl brand-gradient font-display text-[13px] font-bold tracking-tighter text-primary-foreground shadow-[var(--shadow-brand)]">
-            Z
-          </span>
+          <img
+            src="/__l5e/assets-v1/20345e55-06c6-437d-8a27-de545f1b3ec8/zender-logo.png"
+            alt="Zender237"
+            className="size-9 rounded-xl object-contain shadow-[var(--shadow-brand)]"
+          />
           <span className="hidden leading-none sm:block">
             <span className="font-display block text-[14px] font-semibold tracking-tight text-foreground">
               Zender237

@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -1260,6 +1260,494 @@ export type Database = {
         }
         Relationships: []
       }
+      loan_disbursements: {
+        Row: {
+          admin_id: string | null
+          amount: number
+          created_at: string
+          external_reference: string | null
+          failure_reason: string | null
+          id: string
+          loan_id: string
+          metadata: Json | null
+          method: string
+          processed_at: string | null
+          status: string
+        }
+        Insert: {
+          admin_id?: string | null
+          amount: number
+          created_at?: string
+          external_reference?: string | null
+          failure_reason?: string | null
+          id?: string
+          loan_id: string
+          metadata?: Json | null
+          method: string
+          processed_at?: string | null
+          status?: string
+        }
+        Update: {
+          admin_id?: string | null
+          amount?: number
+          created_at?: string
+          external_reference?: string | null
+          failure_reason?: string | null
+          id?: string
+          loan_id?: string
+          metadata?: Json | null
+          method?: string
+          processed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_disbursements_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_disbursements_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: true
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_events: {
+        Row: {
+          actor_admin_id: string | null
+          amount: number | null
+          created_at: string
+          event_type: string
+          id: string
+          loan_id: string | null
+          loan_request_id: string | null
+          metadata: Json | null
+          note: string | null
+        }
+        Insert: {
+          actor_admin_id?: string | null
+          amount?: number | null
+          created_at?: string
+          event_type: string
+          id?: string
+          loan_id?: string | null
+          loan_request_id?: string | null
+          metadata?: Json | null
+          note?: string | null
+        }
+        Update: {
+          actor_admin_id?: string | null
+          amount?: number | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          loan_id?: string | null
+          loan_request_id?: string | null
+          metadata?: Json | null
+          note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_events_actor_admin_id_fkey"
+            columns: ["actor_admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_events_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_events_loan_request_id_fkey"
+            columns: ["loan_request_id"]
+            isOneToOne: false
+            referencedRelation: "loan_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_installments: {
+        Row: {
+          amount_due: number
+          amount_paid: number
+          created_at: string
+          due_date: string
+          id: string
+          installment_number: number
+          loan_id: string
+          paid_at: string | null
+          status: string
+        }
+        Insert: {
+          amount_due: number
+          amount_paid?: number
+          created_at?: string
+          due_date: string
+          id?: string
+          installment_number: number
+          loan_id: string
+          paid_at?: string | null
+          status?: string
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number
+          created_at?: string
+          due_date?: string
+          id?: string
+          installment_number?: number
+          loan_id?: string
+          paid_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_installments_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_repayments: {
+        Row: {
+          amount: number
+          created_at: string
+          external_reference: string | null
+          id: string
+          loan_id: string
+          metadata: Json | null
+          note: string | null
+          paid_at: string
+          payment_method: string
+          proof_url: string | null
+          recorded_by_admin_id: string | null
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          loan_id: string
+          metadata?: Json | null
+          note?: string | null
+          paid_at?: string
+          payment_method?: string
+          proof_url?: string | null
+          recorded_by_admin_id?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          loan_id?: string
+          metadata?: Json | null
+          note?: string | null
+          paid_at?: string
+          payment_method?: string
+          proof_url?: string | null
+          recorded_by_admin_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_repayments_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_repayments_recorded_by_admin_id_fkey"
+            columns: ["recorded_by_admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_requests: {
+        Row: {
+          accommodation_months: number
+          accommodation_requested: boolean
+          admin_id: string | null
+          admin_notes: string | null
+          amount: number
+          cancelled_at: string | null
+          completed_at: string | null
+          contacted_at: string | null
+          contacted_by_admin_id: string | null
+          created_at: string
+          full_name: string
+          id: string
+          id_back_path: string
+          id_front_path: string
+          loan_type: string
+          passenger_name: string | null
+          phone_number: string | null
+          processed_at: string | null
+          rank_at_request: string
+          rank_rule_id: string | null
+          rejection_reason: string | null
+          repayment_months: number
+          status: string
+          submitted_at: string
+          travel_date: string | null
+          travel_destination: string | null
+          travel_origin: string | null
+          updated_at: string
+          user_id: string
+          whatsapp_number: string
+        }
+        Insert: {
+          accommodation_months?: number
+          accommodation_requested?: boolean
+          admin_id?: string | null
+          admin_notes?: string | null
+          amount: number
+          cancelled_at?: string | null
+          completed_at?: string | null
+          contacted_at?: string | null
+          contacted_by_admin_id?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+          id_back_path: string
+          id_front_path: string
+          loan_type: string
+          passenger_name?: string | null
+          phone_number?: string | null
+          processed_at?: string | null
+          rank_at_request: string
+          rank_rule_id?: string | null
+          rejection_reason?: string | null
+          repayment_months: number
+          status?: string
+          submitted_at?: string
+          travel_date?: string | null
+          travel_destination?: string | null
+          travel_origin?: string | null
+          updated_at?: string
+          user_id: string
+          whatsapp_number: string
+        }
+        Update: {
+          accommodation_months?: number
+          accommodation_requested?: boolean
+          admin_id?: string | null
+          admin_notes?: string | null
+          amount?: number
+          cancelled_at?: string | null
+          completed_at?: string | null
+          contacted_at?: string | null
+          contacted_by_admin_id?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          id_back_path?: string
+          id_front_path?: string
+          loan_type?: string
+          passenger_name?: string | null
+          phone_number?: string | null
+          processed_at?: string | null
+          rank_at_request?: string
+          rank_rule_id?: string | null
+          rejection_reason?: string | null
+          repayment_months?: number
+          status?: string
+          submitted_at?: string
+          travel_date?: string | null
+          travel_destination?: string | null
+          travel_origin?: string | null
+          updated_at?: string
+          user_id?: string
+          whatsapp_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_requests_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_requests_rank_rule_id_fkey"
+            columns: ["rank_rule_id"]
+            isOneToOne: false
+            referencedRelation: "rank_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_status_history: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          id: string
+          loan_request_id: string
+          metadata: Json | null
+          new_status: string
+          previous_status: string | null
+          reason: string | null
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          loan_request_id: string
+          metadata?: Json | null
+          new_status: string
+          previous_status?: string | null
+          reason?: string | null
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          loan_request_id?: string
+          metadata?: Json | null
+          new_status?: string
+          previous_status?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_status_history_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_status_history_loan_request_id_fkey"
+            columns: ["loan_request_id"]
+            isOneToOne: false
+            referencedRelation: "loan_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loans: {
+        Row: {
+          accommodation_months: number
+          amount_repaid: number
+          approved_amount: number
+          approved_at: string
+          approved_by_admin_id: string | null
+          closed_at: string | null
+          created_at: string
+          disbursed_at: string | null
+          disbursement_status: string
+          id: string
+          loan_request_id: string
+          loan_type: string
+          maturity_date: string | null
+          notes: string | null
+          outstanding_amount: number
+          rank_at_approval: string
+          repayment_months: number
+          requested_amount: number
+          service_fee: number
+          status: string
+          total_due: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accommodation_months?: number
+          amount_repaid?: number
+          approved_amount: number
+          approved_at?: string
+          approved_by_admin_id?: string | null
+          closed_at?: string | null
+          created_at?: string
+          disbursed_at?: string | null
+          disbursement_status?: string
+          id?: string
+          loan_request_id: string
+          loan_type: string
+          maturity_date?: string | null
+          notes?: string | null
+          outstanding_amount: number
+          rank_at_approval: string
+          repayment_months: number
+          requested_amount: number
+          service_fee?: number
+          status?: string
+          total_due: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accommodation_months?: number
+          amount_repaid?: number
+          approved_amount?: number
+          approved_at?: string
+          approved_by_admin_id?: string | null
+          closed_at?: string | null
+          created_at?: string
+          disbursed_at?: string | null
+          disbursement_status?: string
+          id?: string
+          loan_request_id?: string
+          loan_type?: string
+          maturity_date?: string | null
+          notes?: string | null
+          outstanding_amount?: number
+          rank_at_approval?: string
+          repayment_months?: number
+          requested_amount?: number
+          service_fee?: number
+          status?: string
+          total_due?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loans_approved_by_admin_id_fkey"
+            columns: ["approved_by_admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loans_loan_request_id_fkey"
+            columns: ["loan_request_id"]
+            isOneToOne: true
+            referencedRelation: "loan_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       momo_deposit_numbers: {
         Row: {
           active: boolean
@@ -1297,9 +1785,14 @@ export type Database = {
           kmerdiaspora_admin_id: string | null
           message: string
           metadata: Json | null
+          notification_key: string | null
           partner_id: string | null
+          read_at: string | null
+          resource_id: string | null
+          resource_type: string | null
           sent_at: string
           status: string | null
+          title: string
           transaction_id: string | null
           user_id: string | null
         }
@@ -1312,9 +1805,14 @@ export type Database = {
           kmerdiaspora_admin_id?: string | null
           message: string
           metadata?: Json | null
+          notification_key?: string | null
           partner_id?: string | null
+          read_at?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
           sent_at?: string
           status?: string | null
+          title?: string
           transaction_id?: string | null
           user_id?: string | null
         }
@@ -1327,9 +1825,14 @@ export type Database = {
           kmerdiaspora_admin_id?: string | null
           message?: string
           metadata?: Json | null
+          notification_key?: string | null
           partner_id?: string | null
+          read_at?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
           sent_at?: string
           status?: string | null
+          title?: string
           transaction_id?: string | null
           user_id?: string | null
         }
@@ -1382,6 +1885,7 @@ export type Database = {
         Row: {
           attempts_count: number
           code_hash: string
+          consumed_at: string | null
           created_at: string
           expires_at: string
           id: string
@@ -1392,6 +1896,7 @@ export type Database = {
         Insert: {
           attempts_count?: number
           code_hash: string
+          consumed_at?: string | null
           created_at?: string
           expires_at: string
           id?: string
@@ -1402,6 +1907,7 @@ export type Database = {
         Update: {
           attempts_count?: number
           code_hash?: string
+          consumed_at?: string | null
           created_at?: string
           expires_at?: string
           id?: string
@@ -1503,6 +2009,8 @@ export type Database = {
           id: string
           login_attempts: number
           otp_attempts: number
+          rank_code: string
+          rank_updated_at: string | null
           secret_code_hash: string | null
           username: string
           whatsapp_number: string
@@ -1513,6 +2021,8 @@ export type Database = {
           id: string
           login_attempts?: number
           otp_attempts?: number
+          rank_code?: string
+          rank_updated_at?: string | null
           secret_code_hash?: string | null
           username: string
           whatsapp_number: string
@@ -1523,6 +2033,8 @@ export type Database = {
           id?: string
           login_attempts?: number
           otp_attempts?: number
+          rank_code?: string
+          rank_updated_at?: string | null
           secret_code_hash?: string | null
           username?: string
           whatsapp_number?: string
@@ -1577,6 +2089,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      rank_rules: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          display_order: number
+          flight_accommodation_months: number
+          flight_loan_enabled: boolean
+          flight_loan_repayment_months: number
+          id: string
+          label: string
+          max_flight_loan_amount: number | null
+          max_money_loan_amount: number | null
+          max_transaction_volume: number | null
+          min_transaction_volume: number
+          money_loan_enabled: boolean
+          money_loan_repayment_months: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          display_order?: number
+          flight_accommodation_months?: number
+          flight_loan_enabled?: boolean
+          flight_loan_repayment_months?: number
+          id?: string
+          label: string
+          max_flight_loan_amount?: number | null
+          max_money_loan_amount?: number | null
+          max_transaction_volume?: number | null
+          min_transaction_volume?: number
+          money_loan_enabled?: boolean
+          money_loan_repayment_months?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          display_order?: number
+          flight_accommodation_months?: number
+          flight_loan_enabled?: boolean
+          flight_loan_repayment_months?: number
+          id?: string
+          label?: string
+          max_flight_loan_amount?: number | null
+          max_money_loan_amount?: number | null
+          max_transaction_volume?: number | null
+          min_transaction_volume?: number
+          money_loan_enabled?: boolean
+          money_loan_repayment_months?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       transaction_assignments: {
         Row: {
@@ -2361,6 +2930,294 @@ export type Database = {
       }
     }
     Functions: {
+      admin_approve_loan_request: {
+        Args: {
+          p_approved_amount: number
+          p_notes?: string
+          p_request_id: string
+          p_service_fee?: number
+        }
+        Returns: {
+          accommodation_months: number
+          amount_repaid: number
+          approved_amount: number
+          approved_at: string
+          approved_by_admin_id: string | null
+          closed_at: string | null
+          created_at: string
+          disbursed_at: string | null
+          disbursement_status: string
+          id: string
+          loan_request_id: string
+          loan_type: string
+          maturity_date: string | null
+          notes: string | null
+          outstanding_amount: number
+          rank_at_approval: string
+          repayment_months: number
+          requested_amount: number
+          service_fee: number
+          status: string
+          total_due: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      admin_disburse_loan: {
+        Args: { p_external_reference?: string; p_loan_id: string }
+        Returns: {
+          accommodation_months: number
+          amount_repaid: number
+          approved_amount: number
+          approved_at: string
+          approved_by_admin_id: string | null
+          closed_at: string | null
+          created_at: string
+          disbursed_at: string | null
+          disbursement_status: string
+          id: string
+          loan_request_id: string
+          loan_type: string
+          maturity_date: string | null
+          notes: string | null
+          outstanding_amount: number
+          rank_at_approval: string
+          repayment_months: number
+          requested_amount: number
+          service_fee: number
+          status: string
+          total_due: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      admin_mark_loan_defaulted: {
+        Args: { p_loan_id: string }
+        Returns: {
+          accommodation_months: number
+          amount_repaid: number
+          approved_amount: number
+          approved_at: string
+          approved_by_admin_id: string | null
+          closed_at: string | null
+          created_at: string
+          disbursed_at: string | null
+          disbursement_status: string
+          id: string
+          loan_request_id: string
+          loan_type: string
+          maturity_date: string | null
+          notes: string | null
+          outstanding_amount: number
+          rank_at_approval: string
+          repayment_months: number
+          requested_amount: number
+          service_fee: number
+          status: string
+          total_due: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      admin_record_loan_repayment: {
+        Args: {
+          p_amount: number
+          p_external_reference?: string
+          p_loan_id: string
+          p_note?: string
+          p_payment_method?: string
+          p_proof_url?: string
+        }
+        Returns: {
+          accommodation_months: number
+          amount_repaid: number
+          approved_amount: number
+          approved_at: string
+          approved_by_admin_id: string | null
+          closed_at: string | null
+          created_at: string
+          disbursed_at: string | null
+          disbursement_status: string
+          id: string
+          loan_request_id: string
+          loan_type: string
+          maturity_date: string | null
+          notes: string | null
+          outstanding_amount: number
+          rank_at_approval: string
+          repayment_months: number
+          requested_amount: number
+          service_fee: number
+          status: string
+          total_due: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      admin_reject_loan_request: {
+        Args: { p_reason: string; p_request_id: string }
+        Returns: {
+          accommodation_months: number
+          accommodation_requested: boolean
+          admin_id: string | null
+          admin_notes: string | null
+          amount: number
+          cancelled_at: string | null
+          completed_at: string | null
+          contacted_at: string | null
+          contacted_by_admin_id: string | null
+          created_at: string
+          full_name: string
+          id: string
+          id_back_path: string
+          id_front_path: string
+          loan_type: string
+          passenger_name: string | null
+          phone_number: string | null
+          processed_at: string | null
+          rank_at_request: string
+          rank_rule_id: string | null
+          rejection_reason: string | null
+          repayment_months: number
+          status: string
+          submitted_at: string
+          travel_date: string | null
+          travel_destination: string | null
+          travel_origin: string | null
+          updated_at: string
+          user_id: string
+          whatsapp_number: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      admin_update_loan_request_status: {
+        Args: { p_new_status: string; p_reason?: string; p_request_id: string }
+        Returns: {
+          accommodation_months: number
+          accommodation_requested: boolean
+          admin_id: string | null
+          admin_notes: string | null
+          amount: number
+          cancelled_at: string | null
+          completed_at: string | null
+          contacted_at: string | null
+          contacted_by_admin_id: string | null
+          created_at: string
+          full_name: string
+          id: string
+          id_back_path: string
+          id_front_path: string
+          loan_type: string
+          passenger_name: string | null
+          phone_number: string | null
+          processed_at: string | null
+          rank_at_request: string
+          rank_rule_id: string | null
+          rejection_reason: string | null
+          repayment_months: number
+          status: string
+          submitted_at: string
+          travel_date: string | null
+          travel_destination: string | null
+          travel_origin: string | null
+          updated_at: string
+          user_id: string
+          whatsapp_number: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      cancel_my_loan_request: {
+        Args: { p_request_id: string }
+        Returns: {
+          accommodation_months: number
+          accommodation_requested: boolean
+          admin_id: string | null
+          admin_notes: string | null
+          amount: number
+          cancelled_at: string | null
+          completed_at: string | null
+          contacted_at: string | null
+          contacted_by_admin_id: string | null
+          created_at: string
+          full_name: string
+          id: string
+          id_back_path: string
+          id_front_path: string
+          loan_type: string
+          passenger_name: string | null
+          phone_number: string | null
+          processed_at: string | null
+          rank_at_request: string
+          rank_rule_id: string | null
+          rejection_reason: string | null
+          repayment_months: number
+          status: string
+          submitted_at: string
+          travel_date: string | null
+          travel_destination: string | null
+          travel_origin: string | null
+          updated_at: string
+          user_id: string
+          whatsapp_number: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_user_notification: {
+        Args: {
+          p_event_type: string
+          p_message: string
+          p_metadata?: Json
+          p_notification_key?: string
+          p_resource_id?: string
+          p_resource_type?: string
+          p_title?: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      get_loan_eligibility: {
+        Args: { p_amount: number; p_loan_type: string }
+        Returns: Json
+      }
       get_transfer_fee: {
         Args: {
           p_amount: number
@@ -2370,6 +3227,34 @@ export type Database = {
         Returns: number
       }
       is_current_admin: { Args: never; Returns: boolean }
+      queue_loan_notification: {
+        Args: {
+          p_event_type: string
+          p_message: string
+          p_metadata?: Json
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      recalculate_user_rank: { Args: { p_user_id: string }; Returns: Json }
+      refresh_loan_overdues: { Args: never; Returns: number }
+      submit_loan_request: {
+        Args: {
+          p_accommodation_requested?: boolean
+          p_amount: number
+          p_full_name: string
+          p_id_back_path: string
+          p_id_front_path: string
+          p_loan_type: string
+          p_passenger_name?: string
+          p_phone_number: string
+          p_travel_date?: string
+          p_travel_destination?: string
+          p_travel_origin?: string
+          p_whatsapp_number: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       admin_role: "admin" | "partner"
