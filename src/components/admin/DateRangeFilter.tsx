@@ -1,6 +1,7 @@
 import { CalendarDays, X } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
+import { money as fmt } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export type DateRange = { from: string; to: string };
@@ -100,6 +101,51 @@ export function DateRangeFilter({
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+export type Totals = {
+  depositAmount: number;
+  depositCount: number;
+  transferAmount: number;
+  transferCount: number;
+  withdrawalAmount: number;
+  withdrawalCount: number;
+  transferFees: number;
+  withdrawalFees: number;
+  totalFees: number;
+  count: number;
+};
+
+export function TotalsStrip({ totals }: { totals: Totals }) {
+  const items = [
+    { label: "Total dépôts", value: totals.depositAmount, hint: `${totals.depositCount} opération(s)` },
+    { label: "Total transferts", value: totals.transferAmount, hint: `${totals.transferCount} opération(s)` },
+    { label: "Total retraits", value: totals.withdrawalAmount, hint: `${totals.withdrawalCount} opération(s)` },
+    {
+      label: "Total frais",
+      value: totals.totalFees,
+      hint: `Transferts ${fmt(totals.transferFees)} · Retraits ${fmt(totals.withdrawalFees)}`,
+      accent: true,
+    },
+  ];
+  return (
+    <div className="surface grid gap-px overflow-hidden rounded-xl bg-line p-0 sm:grid-cols-2 xl:grid-cols-4">
+      {items.map((s) => (
+        <div key={s.label} className="flex flex-col gap-2 bg-surface px-5 py-4">
+          <span className="mono-label truncate text-muted-foreground">{s.label}</span>
+          <p
+            className={cn(
+              "num font-display truncate text-[1.375rem] leading-none font-semibold",
+              s.accent ? "text-primary" : "text-foreground",
+            )}
+          >
+            {fmt(s.value)}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">{s.hint}</p>
+        </div>
+      ))}
     </div>
   );
 }
