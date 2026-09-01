@@ -141,7 +141,7 @@ function DashboardPage() {
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="surface rounded-xl p-5 shadow-none lg:col-span-2">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="section-title block">Volumes des 14 derniers jours</h2>
+            <h2 className="section-title block">Volumes — {rangeLabel(range)}</h2>
             <span className="mono-label">XAF</span>
           </div>
           <div className="h-64">
