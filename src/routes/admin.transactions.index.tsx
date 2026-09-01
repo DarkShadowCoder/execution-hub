@@ -10,6 +10,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { money, dateTime, label, TX_TYPE_LABELS, TX_STATUS_LABELS } from "@/lib/format";
+import {
+  DateRangeFilter,
+  EMPTY_RANGE,
+  TotalsStrip,
+  rangeLabel,
+  type DateRange,
+} from "@/components/admin/DateRangeFilter";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/transactions/")({
@@ -35,17 +42,30 @@ function TransactionsPage() {
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
   const [search, setSearch] = useState("");
+  const [range, setRange] = useState<DateRange>(EMPTY_RANGE);
 
   const { data, isPending } = useQuery({
-    queryKey: ["transactions", status, type, search],
-    queryFn: () => fetchList({ data: { status: status || undefined, type: type || undefined, search: search || undefined } }),
+    queryKey: ["transactions", status, type, search, range.from, range.to],
+    queryFn: () =>
+      fetchList({
+        data: {
+          status: status || undefined,
+          type: type || undefined,
+          search: search || undefined,
+          from: range.from || undefined,
+          to: range.to || undefined,
+        },
+      }),
   });
 
   return (
     <div className="reveal space-y-8">
-      <PageHeader title="Transactions" subtitle="Toutes les opérations financières de la plateforme" />
+      <PageHeader
+        title="Transactions"
+        subtitle={`Toutes les opérations financières de la plateforme — ${rangeLabel(range)}`}
+      />
 
-      <Card className="space-y-3 p-4">
+      <Card className="space-y-4 p-5">
         <div className="relative">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -55,6 +75,7 @@ function TransactionsPage() {
             className="pl-9"
           />
         </div>
+        <DateRangeFilter value={range} onChange={setRange} />
         <div className="flex flex-wrap gap-2">
           {STATUSES.map((s) => (
             <FilterChip key={s || "all"} active={status === s} onClick={() => setStatus(s)}>
@@ -70,6 +91,13 @@ function TransactionsPage() {
           ))}
         </div>
       </Card>
+
+      {data?.totals && (
+        <section className="space-y-3">
+          <h2 className="section-title block">Totaux sur la période</h2>
+          <TotalsStrip totals={data.totals} />
+        </section>
+      )}
 
       <Card className="overflow-hidden p-0">
         {isPending ? (

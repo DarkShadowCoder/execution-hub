@@ -512,9 +512,34 @@ export type Database = {
           },
         ]
       }
+      kd_city_settings: {
+        Row: {
+          active: boolean
+          city: Database["public"]["Enums"]["kd_city"]
+          created_at: string
+          display_order: number
+        }
+        Insert: {
+          active?: boolean
+          city: Database["public"]["Enums"]["kd_city"]
+          created_at?: string
+          display_order: number
+        }
+        Update: {
+          active?: boolean
+          city?: Database["public"]["Enums"]["kd_city"]
+          created_at?: string
+          display_order?: number
+        }
+        Relationships: []
+      }
       kd_driver_matches: {
         Row: {
+          city_match: boolean | null
+          closed_at: string | null
           contact_revealed_at: string | null
+          country_match: boolean | null
+          created_at: string | null
           created_automatically: boolean
           created_by_admin_id: string | null
           created_by_kma_id: string | null
@@ -525,11 +550,21 @@ export type Database = {
           job_request_id: string
           match_score: number | null
           matched_at: string
+          mobility_match: boolean | null
+          profile_type_match: boolean | null
           recruiter_notified_at: string | null
+          score: number | null
+          score_details: Json | null
+          selected_at: string | null
           status: string
+          whatsapp_initiated_at: string | null
         }
         Insert: {
+          city_match?: boolean | null
+          closed_at?: string | null
           contact_revealed_at?: string | null
+          country_match?: boolean | null
+          created_at?: string | null
           created_automatically?: boolean
           created_by_admin_id?: string | null
           created_by_kma_id?: string | null
@@ -540,11 +575,21 @@ export type Database = {
           job_request_id: string
           match_score?: number | null
           matched_at?: string
+          mobility_match?: boolean | null
+          profile_type_match?: boolean | null
           recruiter_notified_at?: string | null
+          score?: number | null
+          score_details?: Json | null
+          selected_at?: string | null
           status?: string
+          whatsapp_initiated_at?: string | null
         }
         Update: {
+          city_match?: boolean | null
+          closed_at?: string | null
           contact_revealed_at?: string | null
+          country_match?: boolean | null
+          created_at?: string | null
           created_automatically?: boolean
           created_by_admin_id?: string | null
           created_by_kma_id?: string | null
@@ -555,8 +600,14 @@ export type Database = {
           job_request_id?: string
           match_score?: number | null
           matched_at?: string
+          mobility_match?: boolean | null
+          profile_type_match?: boolean | null
           recruiter_notified_at?: string | null
+          score?: number | null
+          score_details?: Json | null
+          selected_at?: string | null
           status?: string
+          whatsapp_initiated_at?: string | null
         }
         Relationships: [
           {
@@ -596,10 +647,40 @@ export type Database = {
           },
         ]
       }
+      kd_driver_request_cities: {
+        Row: {
+          city: Database["public"]["Enums"]["kd_city"]
+          created_at: string
+          driver_request_id: string
+          id: string
+        }
+        Insert: {
+          city: Database["public"]["Enums"]["kd_city"]
+          created_at?: string
+          driver_request_id: string
+          id?: string
+        }
+        Update: {
+          city?: Database["public"]["Enums"]["kd_city"]
+          created_at?: string
+          driver_request_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kd_driver_request_cities_request_fk"
+            columns: ["driver_request_id"]
+            isOneToOne: false
+            referencedRelation: "kd_driver_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kd_driver_requests: {
         Row: {
           city: string | null
-          contact_phone: string
+          closed_at: string | null
+          contact_phone: string | null
           country: string
           created_at: string
           description: string | null
@@ -610,14 +691,19 @@ export type Database = {
           managed_by_admin_id: string | null
           managed_by_kma_id: string | null
           managed_by_partner_id: string | null
+          matched_at: string | null
           neighborhood: string | null
           requester_user_id: string | null
+          selected_at: string | null
+          selected_job_request_id: string | null
           status: string
           updated_at: string
+          whatsapp_initiated_at: string | null
         }
         Insert: {
           city?: string | null
-          contact_phone: string
+          closed_at?: string | null
+          contact_phone?: string | null
           country: string
           created_at?: string
           description?: string | null
@@ -628,14 +714,19 @@ export type Database = {
           managed_by_admin_id?: string | null
           managed_by_kma_id?: string | null
           managed_by_partner_id?: string | null
+          matched_at?: string | null
           neighborhood?: string | null
           requester_user_id?: string | null
+          selected_at?: string | null
+          selected_job_request_id?: string | null
           status?: string
           updated_at?: string
+          whatsapp_initiated_at?: string | null
         }
         Update: {
           city?: string | null
-          contact_phone?: string
+          closed_at?: string | null
+          contact_phone?: string | null
           country?: string
           created_at?: string
           description?: string | null
@@ -646,10 +737,14 @@ export type Database = {
           managed_by_admin_id?: string | null
           managed_by_kma_id?: string | null
           managed_by_partner_id?: string | null
+          matched_at?: string | null
           neighborhood?: string | null
           requester_user_id?: string | null
+          selected_at?: string | null
+          selected_job_request_id?: string | null
           status?: string
           updated_at?: string
+          whatsapp_initiated_at?: string | null
         }
         Relationships: [
           {
@@ -684,6 +779,7 @@ export type Database = {
       }
       kd_job_requests: {
         Row: {
+          city: Database["public"]["Enums"]["kd_city"] | null
           closed_at: string | null
           country: string
           created_at: string
@@ -694,7 +790,7 @@ export type Database = {
           managed_by_kma_id: string | null
           managed_by_partner_id: string | null
           mobility_area: string
-          phone_number: string
+          phone_number: string | null
           profile_id: string
           published_at: string | null
           region: string | null
@@ -703,6 +799,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          city?: Database["public"]["Enums"]["kd_city"] | null
           closed_at?: string | null
           country: string
           created_at?: string
@@ -713,7 +810,7 @@ export type Database = {
           managed_by_kma_id?: string | null
           managed_by_partner_id?: string | null
           mobility_area: string
-          phone_number: string
+          phone_number?: string | null
           profile_id: string
           published_at?: string | null
           region?: string | null
@@ -722,6 +819,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          city?: Database["public"]["Enums"]["kd_city"] | null
           closed_at?: string | null
           country?: string
           created_at?: string
@@ -732,7 +830,7 @@ export type Database = {
           managed_by_kma_id?: string | null
           managed_by_partner_id?: string | null
           mobility_area?: string
-          phone_number?: string
+          phone_number?: string | null
           profile_id?: string
           published_at?: string | null
           region?: string | null
@@ -760,6 +858,13 @@ export type Database = {
             columns: ["managed_by_partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kd_job_requests_profile_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "kd_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -835,7 +940,7 @@ export type Database = {
           id: string
           mobility_area: string | null
           neighborhood: string | null
-          phone_number: string
+          phone_number: string | null
           profile_type: string
           region: string | null
           residence_country: string
@@ -851,7 +956,7 @@ export type Database = {
           id?: string
           mobility_area?: string | null
           neighborhood?: string | null
-          phone_number: string
+          phone_number?: string | null
           profile_type?: string
           region?: string | null
           residence_country: string
@@ -867,7 +972,7 @@ export type Database = {
           id?: string
           mobility_area?: string | null
           neighborhood?: string | null
-          phone_number?: string
+          phone_number?: string | null
           profile_type?: string
           region?: string | null
           residence_country?: string
@@ -875,6 +980,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "kd_profiles_user_fk"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "kd_profiles_user_fkey"
             columns: ["user_id"]
@@ -894,6 +1006,7 @@ export type Database = {
           is_creator_initial_contribution: boolean
           metadata: Json | null
           quest_id: string
+          refunded_at: string | null
           reversed_at: string | null
           status: string
           wallet_ledger_entry_id: string | null
@@ -907,6 +1020,7 @@ export type Database = {
           is_creator_initial_contribution?: boolean
           metadata?: Json | null
           quest_id: string
+          refunded_at?: string | null
           reversed_at?: string | null
           status?: string
           wallet_ledger_entry_id?: string | null
@@ -920,11 +1034,33 @@ export type Database = {
           is_creator_initial_contribution?: boolean
           metadata?: Json | null
           quest_id?: string
+          refunded_at?: string | null
           reversed_at?: string | null
           status?: string
           wallet_ledger_entry_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "kd_contributions_quest_fk"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "kd_quests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kd_contributions_quest_fk"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "v_kd_quest_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kd_contributions_user_fk"
+            columns: ["contributor_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "kd_qc_ledger_fkey"
             columns: ["wallet_ledger_entry_id"]
@@ -1043,10 +1179,63 @@ export type Database = {
           },
         ]
       }
+      kd_quest_members: {
+        Row: {
+          id: string
+          joined_at: string
+          left_at: string | null
+          quest_id: string
+          status: Database["public"]["Enums"]["kd_quest_member_status"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          quest_id: string
+          status?: Database["public"]["Enums"]["kd_quest_member_status"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          quest_id?: string
+          status?: Database["public"]["Enums"]["kd_quest_member_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kd_quest_members_quest_fk"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "kd_quests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kd_quest_members_quest_fk"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "v_kd_quest_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kd_quest_members_user_fk"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kd_quests: {
         Row: {
+          beneficiary_approval_required: boolean | null
+          beneficiary_approved_at: string | null
+          beneficiary_rejected_at: string | null
           beneficiary_user_id: string | null
           cancelled_at: string | null
+          closed_at: string | null
           completed_at: string | null
           created_at: string
           creator_initial_contribution_id: string | null
@@ -1064,14 +1253,22 @@ export type Database = {
           moderated_at: string | null
           moderated_by_kma_id: string | null
           published_at: string | null
+          settled_at: string | null
+          settlement_amount: number | null
+          settlement_transaction_id: string | null
+          seven_day_deadline: string | null
           status: string
-          target_amount: number
+          target_amount: number | null
           title: string
           updated_at: string
         }
         Insert: {
+          beneficiary_approval_required?: boolean | null
+          beneficiary_approved_at?: string | null
+          beneficiary_rejected_at?: string | null
           beneficiary_user_id?: string | null
           cancelled_at?: string | null
+          closed_at?: string | null
           completed_at?: string | null
           created_at?: string
           creator_initial_contribution_id?: string | null
@@ -1089,14 +1286,22 @@ export type Database = {
           moderated_at?: string | null
           moderated_by_kma_id?: string | null
           published_at?: string | null
+          settled_at?: string | null
+          settlement_amount?: number | null
+          settlement_transaction_id?: string | null
+          seven_day_deadline?: string | null
           status?: string
-          target_amount: number
+          target_amount?: number | null
           title: string
           updated_at?: string
         }
         Update: {
+          beneficiary_approval_required?: boolean | null
+          beneficiary_approved_at?: string | null
+          beneficiary_rejected_at?: string | null
           beneficiary_user_id?: string | null
           cancelled_at?: string | null
+          closed_at?: string | null
           completed_at?: string | null
           created_at?: string
           creator_initial_contribution_id?: string | null
@@ -1114,8 +1319,12 @@ export type Database = {
           moderated_at?: string | null
           moderated_by_kma_id?: string | null
           published_at?: string | null
+          settled_at?: string | null
+          settlement_amount?: number | null
+          settlement_transaction_id?: string | null
+          seven_day_deadline?: string | null
           status?: string
-          target_amount?: number
+          target_amount?: number | null
           title?: string
           updated_at?: string
         }
@@ -1128,8 +1337,22 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "kd_quests_beneficiary_fk"
+            columns: ["beneficiary_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "kd_quests_beneficiary_fkey"
             columns: ["beneficiary_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kd_quests_creator_fk"
+            columns: ["creator_user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1214,6 +1437,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kd_settings: {
+        Row: {
+          created_at: string
+          id: number
+          updated_at: string
+          whatsapp_admin_name: string
+          whatsapp_admin_number: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          updated_at?: string
+          whatsapp_admin_name?: string
+          whatsapp_admin_number?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          updated_at?: string
+          whatsapp_admin_name?: string
+          whatsapp_admin_number?: string | null
+        }
+        Relationships: []
       }
       kmerdiaspora_admins: {
         Row: {
@@ -2840,8 +3087,22 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "kd_quests_beneficiary_fk"
+            columns: ["beneficiary_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "kd_quests_beneficiary_fkey"
             columns: ["beneficiary_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kd_quests_creator_fk"
+            columns: ["creator_user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -3227,6 +3488,120 @@ export type Database = {
         Returns: number
       }
       is_current_admin: { Args: never; Returns: boolean }
+      kd_calculate_match_score: {
+        Args: { p_driver_request_id: string; p_job_request_id: string }
+        Returns: number
+      }
+      kd_close_quest_automatically: {
+        Args: { p_force_close?: boolean; p_quest_id: string }
+        Returns: Json
+      }
+      kd_contribute_to_quest: {
+        Args: { p_amount: number; p_quest_id: string; p_secret_code: string }
+        Returns: Json
+      }
+      kd_count_distinct_contributors: {
+        Args: { p_quest_id: string }
+        Returns: number
+      }
+      kd_create_automatic_pseudo_deposit: {
+        Args: { p_quest_id: string }
+        Returns: string
+      }
+      kd_create_quest:
+        | {
+            Args: {
+              p_beneficiary_user_id: string
+              p_currency?: string
+              p_description?: string
+              p_duration_end?: string
+              p_initial_contribution?: number
+              p_secret_code?: string
+              p_target_amount?: number
+              p_title: string
+            }
+            Returns: {
+              beneficiary_approval_required: boolean | null
+              beneficiary_approved_at: string | null
+              beneficiary_rejected_at: string | null
+              beneficiary_user_id: string | null
+              cancelled_at: string | null
+              closed_at: string | null
+              completed_at: string | null
+              created_at: string
+              creator_initial_contribution_id: string | null
+              creator_initial_contribution_required: boolean
+              creator_user_id: string | null
+              currency: string
+              current_amount: number
+              description: string | null
+              duration_end: string | null
+              duration_start: string
+              id: string
+              managed_by_admin_id: string | null
+              managed_by_kma_id: string | null
+              managed_by_partner_id: string | null
+              moderated_at: string | null
+              moderated_by_kma_id: string | null
+              published_at: string | null
+              settled_at: string | null
+              settlement_amount: number | null
+              settlement_transaction_id: string | null
+              seven_day_deadline: string | null
+              status: string
+              target_amount: number | null
+              title: string
+              updated_at: string
+            }
+            SetofOptions: {
+              from: "*"
+              to: "kd_quests"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_beneficiary_user_id: string
+              p_description: string
+              p_duration_end: string
+              p_target_amount: number
+              p_title: string
+            }
+            Returns: string
+          }
+      kd_generate_driver_matches: {
+        Args: { p_driver_request_id: string }
+        Returns: number
+      }
+      kd_is_quest_member: { Args: { p_quest_id: string }; Returns: boolean }
+      kd_join_quest: { Args: { p_quest_id: string }; Returns: boolean }
+      kd_process_expired_quests: { Args: never; Returns: number }
+      kd_process_quest_closure: { Args: { p_quest_id: string }; Returns: Json }
+      kd_quest_accepts_contribution: {
+        Args: { p_quest_id: string }
+        Returns: boolean
+      }
+      kd_quest_confirmed_amount: {
+        Args: { p_quest_id: string }
+        Returns: number
+      }
+      kd_quest_contributor_count: {
+        Args: { p_quest_id: string }
+        Returns: number
+      }
+      kd_refresh_driver_matches: {
+        Args: { p_driver_request_id: string }
+        Returns: number
+      }
+      kd_refund_creator_contributions: {
+        Args: { p_quest_id: string }
+        Returns: number
+      }
+      kd_respond_quest_approval: {
+        Args: { p_approved: boolean; p_quest_id: string }
+        Returns: boolean
+      }
       queue_loan_notification: {
         Args: {
           p_event_type: string
@@ -3258,6 +3633,37 @@ export type Database = {
     }
     Enums: {
       admin_role: "admin" | "partner"
+      kd_city: "Sigilli" | "Douala" | "Yaoundé"
+      kd_contribution_status: "confirmed" | "refunded" | "cancelled"
+      kd_match_status:
+        | "suggested"
+        | "selected"
+        | "contact_initiated"
+        | "matched"
+        | "rejected"
+        | "closed"
+      kd_profile_type: "driver" | "recruiter" | "both"
+      kd_quest_member_status: "active" | "left" | "blocked"
+      kd_quest_status:
+        | "draft"
+        | "pending_beneficiary_approval"
+        | "published"
+        | "active"
+        | "completed"
+        | "closed"
+        | "cancelled"
+        | "expired"
+        | "suspended"
+      kd_request_status:
+        | "draft"
+        | "published"
+        | "open"
+        | "matching"
+        | "profile_selected"
+        | "contact_initiated"
+        | "matched"
+        | "closed"
+        | "cancelled"
       notif_channel: "whatsapp" | "push"
       otp_purpose: "registration" | "secret_code_recovery"
       txn_status:
@@ -3396,6 +3802,40 @@ export const Constants = {
   public: {
     Enums: {
       admin_role: ["admin", "partner"],
+      kd_city: ["Sigilli", "Douala", "Yaoundé"],
+      kd_contribution_status: ["confirmed", "refunded", "cancelled"],
+      kd_match_status: [
+        "suggested",
+        "selected",
+        "contact_initiated",
+        "matched",
+        "rejected",
+        "closed",
+      ],
+      kd_profile_type: ["driver", "recruiter", "both"],
+      kd_quest_member_status: ["active", "left", "blocked"],
+      kd_quest_status: [
+        "draft",
+        "pending_beneficiary_approval",
+        "published",
+        "active",
+        "completed",
+        "closed",
+        "cancelled",
+        "expired",
+        "suspended",
+      ],
+      kd_request_status: [
+        "draft",
+        "published",
+        "open",
+        "matching",
+        "profile_selected",
+        "contact_initiated",
+        "matched",
+        "closed",
+        "cancelled",
+      ],
       notif_channel: ["whatsapp", "push"],
       otp_purpose: ["registration", "secret_code_recovery"],
       txn_status: [

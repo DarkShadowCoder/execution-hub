@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -30,6 +31,13 @@ import { KpiCard, PageHeader, StatusPill, EmptyState } from "@/components/admin/
 import { Card } from "@/components/ui/card";
 import { money, dateTime, label, TX_TYPE_LABELS } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DateRangeFilter,
+  EMPTY_RANGE,
+  TotalsStrip,
+  rangeLabel,
+  type DateRange,
+} from "@/components/admin/DateRangeFilter";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -48,7 +56,11 @@ export const Route = createFileRoute("/admin/")({
 
 function DashboardPage() {
   const fetchDashboard = useServerFn(getDashboard);
-  const { data, isPending } = useQuery({ queryKey: ["dashboard"], queryFn: () => fetchDashboard() });
+  const [range, setRange] = useState<DateRange>(EMPTY_RANGE);
+  const { data, isPending } = useQuery({
+    queryKey: ["dashboard", range.from, range.to],
+    queryFn: () => fetchDashboard({ data: { from: range.from || undefined, to: range.to || undefined } }),
+  });
 
   if (isPending || !data) {
     return (
@@ -70,7 +82,7 @@ function DashboardPage() {
     <div className="reveal space-y-8">
       <PageHeader
         title="Console opérationnelle"
-        subtitle="Qu'est-ce qui nécessite votre intervention maintenant ?"
+        subtitle={`Qu'est-ce qui nécessite votre intervention maintenant ? — ${rangeLabel(range)}`}
         actions={
           <Link
             to="/admin/transactions"
@@ -80,6 +92,16 @@ function DashboardPage() {
           </Link>
         }
       />
+
+      <Card className="surface rounded-xl p-5 shadow-none">
+        <DateRangeFilter value={range} onChange={setRange} />
+      </Card>
+
+      {/* Totaux par type et frais */}
+      <section className="space-y-3">
+        <h2 className="section-title block">Totaux sur la période</h2>
+        <TotalsStrip totals={data.totals} />
+      </section>
 
       {/* File d'attente opérationnelle */}
       <section className="space-y-3">
@@ -119,7 +141,7 @@ function DashboardPage() {
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="surface rounded-xl p-5 shadow-none lg:col-span-2">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="section-title block">Volumes des 14 derniers jours</h2>
+            <h2 className="section-title block">Volumes — {rangeLabel(range)}</h2>
             <span className="mono-label">XAF</span>
           </div>
           <div className="h-64">

@@ -9,20 +9,54 @@ export const getAdminMe = createServerFn({ method: "GET" })
     return { admin };
   });
 
+export type DateRangeInput = { from?: string | undefined; to?: string | undefined } | undefined;
+
+export function rangeBounds(data: DateRangeInput) {
+  const from = data?.from ? `${data.from}T00:00:00.000Z` : null;
+  const to = data?.to ? `${data.to}T23:59:59.999Z` : null;
+  return { from, to };
+}
+
+export function totalsFromRows(rows: any[]) {
+  const sum = (list: any[], key: string) => list.reduce((a, r) => a + Number(r[key] ?? 0), 0);
+  const byType = (t: string) => rows.filter((r) => r.type === t);
+  const deposits = byType("deposit");
+  const transfers = byType("transfer");
+  const withdrawals = byType("withdrawal");
+  return {
+    depositAmount: sum(deposits, "amount"),
+    depositCount: deposits.length,
+    transferAmount: sum(transfers, "amount"),
+    transferCount: transfers.length,
+    withdrawalAmount: sum(withdrawals, "amount"),
+    withdrawalCount: withdrawals.length,
+    transferFees: sum(transfers, "fee_amount"),
+    withdrawalFees: sum(withdrawals, "fee_amount"),
+    totalFees: sum(transfers, "fee_amount") + sum(withdrawals, "fee_amount"),
+    count: rows.length,
+  };
+}
+
 export const getDashboard = createServerFn({ method: "GET" })
+  .inputValidator((d: { from?: string | undefined; to?: string | undefined } | undefined) => d ?? {})
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async ({ context, data }) => {
     const { assertAdmin, db, unwrap } = await import("./admin.server");
     await assertAdmin(context.userId);
 
+    const { from, to } = rangeBounds(data);
+    let txQuery = db
+      .from("transactions")
+      .select(
+        "id, type, status, amount, fee_amount, created_at, recipient_name, sender_name, recipient_country, user_id, workflow_stage",
+      )
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    if (from) txQuery = txQuery.gte("created_at", from);
+    if (to) txQuery = txQuery.lte("created_at", to);
+
     const [txs, wallets, profiles, partners, settlements] = await Promise.all([
-      db
-        .from("transactions")
-        .select(
-          "id, type, status, amount, fee_amount, created_at, recipient_name, sender_name, recipient_country, user_id, workflow_stage",
-        )
-        .order("created_at", { ascending: false })
-        .limit(400),
+      txQuery,
       db.from("wallets").select("available_balance, pending_balance"),
       db.from("profiles").select("id, username, country, created_at"),
       db.from("partners").select("id, active"),
@@ -36,20 +70,33 @@ export const getDashboard = createServerFn({ method: "GET" })
     const st = unwrap(settlements) as any[];
 
     const byStatus = (s: string) => rows.filter((r) => r.status === s);
-    const days: { day: string; volume: number; count: number }[] = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
+
+    // Série temporelle : sur la plage choisie, sinon sur les 14 derniers jours.
+    const dayKeys: string[] = [];
+    if (data?.from || data?.to) {
+      const start = new Date(`${data.from ?? data.to}T00:00:00.000Z`);
+      const end = new Date(`${data.to ?? data.from}T00:00:00.000Z`);
+      for (let d = new Date(start); d <= end && dayKeys.length < 120; d.setUTCDate(d.getUTCDate() + 1)) {
+        dayKeys.push(d.toISOString().slice(0, 10));
+      }
+    } else {
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dayKeys.push(d.toISOString().slice(0, 10));
+      }
+    }
+    const days = dayKeys.map((key) => {
       const dayRows = rows.filter((r) => (r.created_at ?? "").slice(0, 10) === key);
-      days.push({
+      return {
         day: key.slice(5),
         volume: dayRows.reduce((a, r) => a + Number(r.amount ?? 0), 0),
         count: dayRows.length,
-      });
-    }
+      };
+    });
 
     return {
+      totals: totalsFromRows(rows),
       kpis: {
         toReview: byStatus("under_review").length,
         pendingProof: byStatus("pending_proof").length,
@@ -75,7 +122,19 @@ export const getDashboard = createServerFn({ method: "GET" })
   });
 
 export const listTransactions = createServerFn({ method: "GET" })
-  .inputValidator((d: { status?: string | undefined; type?: string | undefined; search?: string | undefined } | undefined) => d ?? {})
+  .inputValidator(
+    (
+      d:
+        | {
+            status?: string | undefined;
+            type?: string | undefined;
+            search?: string | undefined;
+            from?: string | undefined;
+            to?: string | undefined;
+          }
+        | undefined,
+    ) => d ?? {},
+  )
   .middleware([requireSupabaseAuth])
   .handler(async ({ context, data }) => {
     const { assertAdmin, db, unwrap } = await import("./admin.server");
@@ -86,14 +145,18 @@ export const listTransactions = createServerFn({ method: "GET" })
         "id, type, status, workflow_stage, amount, fee_amount, created_at, sender_name, sender_phone_number, recipient_name, recipient_mobile_number, recipient_country, user_id, partner_id",
       )
       .order("created_at", { ascending: false })
-      .limit(300);
+      .limit(1000);
     if (data.status) q = q.eq("status", data.status as never);
     if (data.type) q = q.eq("type", data.type as never);
+    const { from, to } = rangeBounds(data);
+    if (from) q = q.gte("created_at", from);
+    if (to) q = q.lte("created_at", to);
     if (data.search)
       q = q.or(
         `sender_name.ilike.%${data.search}%,recipient_name.ilike.%${data.search}%,recipient_mobile_number.ilike.%${data.search}%`,
       );
-    return { rows: unwrap(await q) as any[] };
+    const rows = unwrap(await q) as any[];
+    return { rows, totals: totalsFromRows(rows) };
   });
 
 export const getTransaction = createServerFn({ method: "GET" })
