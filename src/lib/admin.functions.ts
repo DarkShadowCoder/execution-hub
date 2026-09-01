@@ -9,20 +9,54 @@ export const getAdminMe = createServerFn({ method: "GET" })
     return { admin };
   });
 
+export type DateRangeInput = { from?: string | undefined; to?: string | undefined } | undefined;
+
+export function rangeBounds(data: DateRangeInput) {
+  const from = data?.from ? `${data.from}T00:00:00.000Z` : null;
+  const to = data?.to ? `${data.to}T23:59:59.999Z` : null;
+  return { from, to };
+}
+
+export function totalsFromRows(rows: any[]) {
+  const sum = (list: any[], key: string) => list.reduce((a, r) => a + Number(r[key] ?? 0), 0);
+  const byType = (t: string) => rows.filter((r) => r.type === t);
+  const deposits = byType("deposit");
+  const transfers = byType("transfer");
+  const withdrawals = byType("withdrawal");
+  return {
+    depositAmount: sum(deposits, "amount"),
+    depositCount: deposits.length,
+    transferAmount: sum(transfers, "amount"),
+    transferCount: transfers.length,
+    withdrawalAmount: sum(withdrawals, "amount"),
+    withdrawalCount: withdrawals.length,
+    transferFees: sum(transfers, "fee_amount"),
+    withdrawalFees: sum(withdrawals, "fee_amount"),
+    totalFees: sum(transfers, "fee_amount") + sum(withdrawals, "fee_amount"),
+    count: rows.length,
+  };
+}
+
 export const getDashboard = createServerFn({ method: "GET" })
+  .inputValidator((d: { from?: string | undefined; to?: string | undefined } | undefined) => d ?? {})
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async ({ context, data }) => {
     const { assertAdmin, db, unwrap } = await import("./admin.server");
     await assertAdmin(context.userId);
 
+    const { from, to } = rangeBounds(data);
+    let txQuery = db
+      .from("transactions")
+      .select(
+        "id, type, status, amount, fee_amount, created_at, recipient_name, sender_name, recipient_country, user_id, workflow_stage",
+      )
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    if (from) txQuery = txQuery.gte("created_at", from);
+    if (to) txQuery = txQuery.lte("created_at", to);
+
     const [txs, wallets, profiles, partners, settlements] = await Promise.all([
-      db
-        .from("transactions")
-        .select(
-          "id, type, status, amount, fee_amount, created_at, recipient_name, sender_name, recipient_country, user_id, workflow_stage",
-        )
-        .order("created_at", { ascending: false })
-        .limit(400),
+      txQuery,
       db.from("wallets").select("available_balance, pending_balance"),
       db.from("profiles").select("id, username, country, created_at"),
       db.from("partners").select("id, active"),
