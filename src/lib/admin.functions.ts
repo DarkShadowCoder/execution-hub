@@ -70,20 +70,33 @@ export const getDashboard = createServerFn({ method: "GET" })
     const st = unwrap(settlements) as any[];
 
     const byStatus = (s: string) => rows.filter((r) => r.status === s);
-    const days: { day: string; volume: number; count: number }[] = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
+
+    // Série temporelle : sur la plage choisie, sinon sur les 14 derniers jours.
+    const dayKeys: string[] = [];
+    if (data?.from || data?.to) {
+      const start = new Date(`${data.from ?? data.to}T00:00:00.000Z`);
+      const end = new Date(`${data.to ?? data.from}T00:00:00.000Z`);
+      for (let d = new Date(start); d <= end && dayKeys.length < 120; d.setUTCDate(d.getUTCDate() + 1)) {
+        dayKeys.push(d.toISOString().slice(0, 10));
+      }
+    } else {
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dayKeys.push(d.toISOString().slice(0, 10));
+      }
+    }
+    const days = dayKeys.map((key) => {
       const dayRows = rows.filter((r) => (r.created_at ?? "").slice(0, 10) === key);
-      days.push({
+      return {
         day: key.slice(5),
         volume: dayRows.reduce((a, r) => a + Number(r.amount ?? 0), 0),
         count: dayRows.length,
-      });
-    }
+      };
+    });
 
     return {
+      totals: totalsFromRows(rows),
       kpis: {
         toReview: byStatus("under_review").length,
         pendingProof: byStatus("pending_proof").length,
