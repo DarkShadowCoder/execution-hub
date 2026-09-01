@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -30,6 +31,13 @@ import { KpiCard, PageHeader, StatusPill, EmptyState } from "@/components/admin/
 import { Card } from "@/components/ui/card";
 import { money, dateTime, label, TX_TYPE_LABELS } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DateRangeFilter,
+  EMPTY_RANGE,
+  TotalsStrip,
+  rangeLabel,
+  type DateRange,
+} from "@/components/admin/DateRangeFilter";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
