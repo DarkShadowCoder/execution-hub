@@ -122,7 +122,19 @@ export const getDashboard = createServerFn({ method: "GET" })
   });
 
 export const listTransactions = createServerFn({ method: "GET" })
-  .inputValidator((d: { status?: string | undefined; type?: string | undefined; search?: string | undefined } | undefined) => d ?? {})
+  .inputValidator(
+    (
+      d:
+        | {
+            status?: string | undefined;
+            type?: string | undefined;
+            search?: string | undefined;
+            from?: string | undefined;
+            to?: string | undefined;
+          }
+        | undefined,
+    ) => d ?? {},
+  )
   .middleware([requireSupabaseAuth])
   .handler(async ({ context, data }) => {
     const { assertAdmin, db, unwrap } = await import("./admin.server");
@@ -133,14 +145,18 @@ export const listTransactions = createServerFn({ method: "GET" })
         "id, type, status, workflow_stage, amount, fee_amount, created_at, sender_name, sender_phone_number, recipient_name, recipient_mobile_number, recipient_country, user_id, partner_id",
       )
       .order("created_at", { ascending: false })
-      .limit(300);
+      .limit(1000);
     if (data.status) q = q.eq("status", data.status as never);
     if (data.type) q = q.eq("type", data.type as never);
+    const { from, to } = rangeBounds(data);
+    if (from) q = q.gte("created_at", from);
+    if (to) q = q.lte("created_at", to);
     if (data.search)
       q = q.or(
         `sender_name.ilike.%${data.search}%,recipient_name.ilike.%${data.search}%,recipient_mobile_number.ilike.%${data.search}%`,
       );
-    return { rows: unwrap(await q) as any[] };
+    const rows = unwrap(await q) as any[];
+    return { rows, totals: totalsFromRows(rows) };
   });
 
 export const getTransaction = createServerFn({ method: "GET" })
