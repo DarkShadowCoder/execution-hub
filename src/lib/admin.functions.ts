@@ -775,3 +775,157 @@ export const importTariffs = createServerFn({ method: "POST" })
     });
     return { ok: true, count: clean.length };
   });
+
+/* ------------------------------------------------------------------ */
+/* Gestion des prêts                                                   */
+/* ------------------------------------------------------------------ */
+
+export const listLoans = createServerFn({ method: "GET" })
+  .inputValidator((d: { from?: string | undefined; to?: string | undefined } | undefined) => d ?? {})
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { assertAdmin, db, unwrap } = await import("./admin.server");
+    await assertAdmin(context.userId);
+    const { from, to } = rangeBounds(data);
+
+    let reqQuery = db
+      .from("loan_requests")
+      .select("*")
+      .order("submitted_at", { ascending: false })
+      .limit(500);
+    if (from) reqQuery = reqQuery.gte("submitted_at", from);
+    if (to) reqQuery = reqQuery.lte("submitted_at", to);
+
+    const [requests, loans, installments, repayments, disbursements, events, profiles, rules] =
+      await Promise.all([
+        reqQuery,
+        db.from("loans").select("*").order("created_at", { ascending: false }).limit(500),
+        db.from("loan_installments").select("*").order("due_date", { ascending: true }).limit(2000),
+        db.from("loan_repayments").select("*").order("paid_at", { ascending: false }).limit(1000),
+        db.from("loan_disbursements").select("*").order("created_at", { ascending: false }).limit(500),
+        db.from("loan_events").select("*").order("created_at", { ascending: false }).limit(300),
+        db.from("profiles").select("id, username, whatsapp_number, country, rank_code"),
+        db.from("rank_rules").select("*").order("display_order", { ascending: true }),
+      ]);
+
+    const reqRows = unwrap(requests) as any[];
+    const loanRows = unwrap(loans) as any[];
+    const profileRows = unwrap(profiles) as any[];
+    const byUser = new Map(profileRows.map((p) => [p.id, p]));
+
+    const sum = (list: any[], key: string) => list.reduce((a, r) => a + Number(r[key] ?? 0), 0);
+    const active = loanRows.filter((l) => l.status === "approved" || l.status === "active");
+
+    return {
+      requests: reqRows.map((r) => ({ ...r, user: byUser.get(r.user_id) ?? null })),
+      loans: loanRows.map((l) => ({ ...l, user: byUser.get(l.user_id) ?? null })),
+      installments: unwrap(installments) as any[],
+      repayments: unwrap(repayments) as any[],
+      disbursements: unwrap(disbursements) as any[],
+      events: unwrap(events) as any[],
+      rules: unwrap(rules) as any[],
+      kpis: {
+        submitted: reqRows.filter((r) => r.status === "submitted").length,
+        contacted: reqRows.filter((r) => r.status === "contacted" || r.status === "processing").length,
+        approved: reqRows.filter((r) => r.status === "approved").length,
+        rejected: reqRows.filter((r) => r.status === "rejected").length,
+        requestedAmount: sum(reqRows, "amount"),
+        disbursedAmount: sum(
+          loanRows.filter((l) => l.disbursement_status === "completed"),
+          "approved_amount",
+        ),
+        outstanding: sum(active, "outstanding_amount"),
+        repaid: sum(loanRows, "amount_repaid"),
+        activeLoans: active.length,
+        defaulted: loanRows.filter((l) => l.status === "defaulted").length,
+        fees: sum(loanRows, "service_fee"),
+      },
+    };
+  });
+
+export const updateLoanRequestStatus = createServerFn({ method: "POST" })
+  .inputValidator((d: { requestId: string; status: string; reason?: string | undefined }) => d)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.rpc("admin_update_loan_request_status", {
+      p_request_id: data.requestId,
+      p_new_status: data.status,
+      p_reason: data.reason ?? undefined,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const approveLoanRequest = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: { requestId: string; approvedAmount: number; serviceFee?: number | undefined; notes?: string | undefined }) => d,
+  )
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.rpc("admin_approve_loan_request", {
+      p_request_id: data.requestId,
+      p_approved_amount: data.approvedAmount,
+      p_service_fee: data.serviceFee ?? 0,
+      p_notes: data.notes ?? undefined,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const rejectLoanRequest = createServerFn({ method: "POST" })
+  .inputValidator((d: { requestId: string; reason: string }) => d)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.rpc("admin_reject_loan_request", {
+      p_request_id: data.requestId,
+      p_reason: data.reason,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const disburseLoan = createServerFn({ method: "POST" })
+  .inputValidator((d: { loanId: string; reference?: string | undefined }) => d)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.rpc("admin_disburse_loan", {
+      p_loan_id: data.loanId,
+      p_external_reference: data.reference ?? undefined,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const recordLoanRepayment = createServerFn({ method: "POST" })
+  .inputValidator(
+    (d: {
+      loanId: string;
+      amount: number;
+      method: string;
+      reference?: string | undefined;
+      note?: string | undefined;
+    }) => d,
+  )
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.rpc("admin_record_loan_repayment", {
+      p_loan_id: data.loanId,
+      p_amount: data.amount,
+      p_payment_method: data.method,
+      p_external_reference: data.reference ?? undefined,
+      p_note: data.note ?? undefined,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const markLoanDefaulted = createServerFn({ method: "POST" })
+  .inputValidator((d: { loanId: string }) => d)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.rpc("admin_mark_loan_defaulted", {
+      p_loan_id: data.loanId,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
