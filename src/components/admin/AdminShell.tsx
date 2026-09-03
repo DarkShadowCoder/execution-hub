@@ -7,7 +7,9 @@ import {
   Users,
   Handshake,
   Wallet,
+  HandCoins,
   Smartphone,
+
   Percent,
   Boxes,
   Globe2,
