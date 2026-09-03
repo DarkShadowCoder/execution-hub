@@ -3633,7 +3633,7 @@ export type Database = {
     }
     Enums: {
       admin_role: "admin" | "partner"
-      kd_city: "Sigilli" | "Douala" | "Yaoundé"
+      kd_city: "Siguiri" | "Bamako" | "Kokoyo" | "Kéniéba"
       kd_contribution_status: "confirmed" | "refunded" | "cancelled"
       kd_match_status:
         | "suggested"
@@ -3802,7 +3802,7 @@ export const Constants = {
   public: {
     Enums: {
       admin_role: ["admin", "partner"],
-      kd_city: ["Sigilli", "Douala", "Yaoundé"],
+      kd_city: ["Siguiri", "Bamako", "Kokoyo", "Kéniéba"],
       kd_contribution_status: ["confirmed", "refunded", "cancelled"],
       kd_match_status: [
         "suggested",
