@@ -7,7 +7,9 @@ import {
   Users,
   Handshake,
   Wallet,
+  HandCoins,
   Smartphone,
+
   Percent,
   Boxes,
   Globe2,
@@ -42,7 +44,9 @@ const NAV: { group: string; items: { to: string; label: string; icon: typeof Use
       { to: "/admin/wallets", label: "Wallets", icon: Wallet },
       { to: "/admin/momo", label: "Mobile Money", icon: Smartphone },
       { to: "/admin/tariffs", label: "Tarifs", icon: Percent },
+      { to: "/admin/loans", label: "Prêts", icon: HandCoins },
       { to: "/admin/batches", label: "Lots journaliers", icon: Boxes },
+
     ],
   },
   {
