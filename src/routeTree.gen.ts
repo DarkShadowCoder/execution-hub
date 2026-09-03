@@ -16,6 +16,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AdminBatchesRouteImport } from './routes/admin.batches'
 import { Route as AdminKmerdiasporaRouteImport } from './routes/admin.kmerdiaspora'
+import { Route as AdminLoansRouteImport } from './routes/admin.loans'
 import { Route as AdminMomoRouteImport } from './routes/admin.momo'
 import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -60,6 +61,11 @@ const AdminBatchesRoute = AdminBatchesRouteImport.update({
 const AdminKmerdiasporaRoute = AdminKmerdiasporaRouteImport.update({
   id: '/kmerdiaspora',
   path: '/kmerdiaspora',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoansRoute = AdminLoansRouteImport.update({
+  id: '/loans',
+  path: '/loans',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminMomoRoute = AdminMomoRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/batches': typeof AdminBatchesRoute
   '/admin/kmerdiaspora': typeof AdminKmerdiasporaRoute
+  '/admin/loans': typeof AdminLoansRoute
   '/admin/momo': typeof AdminMomoRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/batches': typeof AdminBatchesRoute
   '/admin/kmerdiaspora': typeof AdminKmerdiasporaRoute
+  '/admin/loans': typeof AdminLoansRoute
   '/admin/momo': typeof AdminMomoRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/batches': typeof AdminBatchesRoute
   '/admin/kmerdiaspora': typeof AdminKmerdiasporaRoute
+  '/admin/loans': typeof AdminLoansRoute
   '/admin/momo': typeof AdminMomoRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/batches'
     | '/admin/kmerdiaspora'
+    | '/admin/loans'
     | '/admin/momo'
     | '/admin/partners'
     | '/admin/settings'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/batches'
     | '/admin/kmerdiaspora'
+    | '/admin/loans'
     | '/admin/momo'
     | '/admin/partners'
     | '/admin/settings'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/batches'
     | '/admin/kmerdiaspora'
+    | '/admin/loans'
     | '/admin/momo'
     | '/admin/partners'
     | '/admin/settings'
@@ -284,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/kmerdiaspora'
       fullPath: '/admin/kmerdiaspora'
       preLoaderRoute: typeof AdminKmerdiasporaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/loans': {
+      id: '/admin/loans'
+      path: '/loans'
+      fullPath: '/admin/loans'
+      preLoaderRoute: typeof AdminLoansRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/momo': {
@@ -363,6 +382,7 @@ interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminBatchesRoute: typeof AdminBatchesRoute
   AdminKmerdiasporaRoute: typeof AdminKmerdiasporaRoute
+  AdminLoansRoute: typeof AdminLoansRoute
   AdminMomoRoute: typeof AdminMomoRoute
   AdminPartnersRoute: typeof AdminPartnersRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -380,6 +400,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminBatchesRoute: AdminBatchesRoute,
   AdminKmerdiasporaRoute: AdminKmerdiasporaRoute,
+  AdminLoansRoute: AdminLoansRoute,
   AdminMomoRoute: AdminMomoRoute,
   AdminPartnersRoute: AdminPartnersRoute,
   AdminSettingsRoute: AdminSettingsRoute,

@@ -42,7 +42,35 @@ export const TX_TYPE_LABELS: Record<string, string> = {
   withdrawal: "Retrait",
 };
 
+export const LOAN_STATUS_LABELS: Record<string, string> = {
+  submitted: "Soumise",
+  contacted: "Contactée",
+  processing: "En traitement",
+  approved: "Approuvée",
+  rejected: "Rejetée",
+  cancelled: "Annulée",
+  completed: "Terminée",
+  active: "En cours",
+  disbursed: "Décaissé",
+  pending: "En attente",
+  failed: "Échoué",
+  defaulted: "En défaut",
+  closed: "Clôturé",
+  paid: "Payée",
+  partial: "Partielle",
+  overdue: "En retard",
+  not_disbursed: "Non décaissé",
+};
+
+export const LOAN_TYPE_LABELS: Record<string, string> = {
+  money: "Prêt d'argent",
+  flight: "Billet d'avion",
+  cash: "Prêt d'argent",
+  travel: "Voyage",
+};
+
 export function label(map: Record<string, string>, key: unknown) {
   const k = String(key ?? "");
   return map[k] ?? k.replace(/_/g, " ") ?? "—";
 }
+
